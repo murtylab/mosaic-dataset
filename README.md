@@ -5,26 +5,14 @@ python module to load the mosaic dataset (Lahner et al.)
 pip install git+https://github.com/Mayukhdeb/mosaic-dataset.git
 ```
 
-BOLD5000
-
 ```python
-from mosaic.datasets import BOLD5000SingleSubject
+import mosaic
 
-dataset = BOLD5000SingleSubject(
-    folder="datasets/bold5000",
-    subject_id=1, ## or 2
-)
-```
-
-Generic Object Decoding
-
-```python
-from mosaic.datasets import (
-    GenericObjectDecodingSingleSubject
+dataset = mosaic.load(
+    # "bold5000", "generic_object_decoding", "nsd", "things_fmri", "deep_recon"
+    name="bold5000", 
+    subject_id="all", # or some integer (1-indexed)
 )
 
-dataset = GenericObjectDecodingSingleSubject(
-    folder="data/god",
-    subject_id=1,
-)
+print(dataset[0])
 ```
