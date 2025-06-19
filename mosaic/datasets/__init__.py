@@ -1,2 +1,3 @@
 from .bold5000 import BOLD5000SingleSubject
 from .generic_object_decoding import GenericObjectDecodingSingleSubject
+from .nsd import NSDSingleSubject
