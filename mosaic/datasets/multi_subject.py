@@ -36,3 +36,6 @@ class MultiSubjectDataset:
             'betas': item['betas'],
             'subject_index': subject_index
         }
+    
+    def __len__(self) -> int:
+        return sum(len(d) for d in self.datasets)
