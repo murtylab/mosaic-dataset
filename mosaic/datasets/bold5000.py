@@ -16,7 +16,9 @@ class BOLD5000SingleSubject:
         folder: str,
         subject_id: int = 1,
     ): 
-
+        assert subject_id in list(subject_id_to_file_mapping.keys()), \
+            f"Subject ID {subject_id} is not valid. Please choose from {list(subject_id_to_file_mapping.keys())}."
+        
         self.folder = folder
         self.subject_id = subject_id
         self.filename = os.path.join(self.folder, subject_id_to_file_mapping[self.subject_id])
