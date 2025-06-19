@@ -1,0 +1,1 @@
+BASE_URL = "https://d3ctas52djku5l.cloudfront.net"
