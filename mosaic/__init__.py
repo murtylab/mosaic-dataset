@@ -7,6 +7,7 @@ from .datasets import (
     NSDSingleSubject,
     ThingsFMRISingleSubject,
     DeepReconSingleSubject,
+    MultiSubjectDataset
 )
 
 name_to_dataset_mapping = {
@@ -15,6 +16,14 @@ name_to_dataset_mapping = {
     "nsd": NSDSingleSubject,
     "things_fmri": ThingsFMRISingleSubject,
     "deep_recon": DeepReconSingleSubject,
+}
+
+num_subjects = {
+    "bold5000": 2,
+    "deeprecon": 3,
+    "generic_object_decoding": 5,
+    "nsd": 1,
+    "things_fmri": 3
 }
 
 def load(
@@ -29,7 +38,15 @@ def load(
     if isinstance(subject_id, str):
         assert subject_id == "all", \
             "If subject_id is a string, it must be 'all'."
-        raise NotImplementedError("Loading all subjects is not implemented yet.")
+        return MultiSubjectDataset(
+            datasets=[
+                name_to_dataset_mapping[name](
+                    folder=os.path.join(folder, name),
+                    subject_id=subject_id,
+                )
+                for subject_id in range(1, num_subjects[name]+1)
+            ]
+        )
 
     else:
         dataset_class = name_to_dataset_mapping[name]
