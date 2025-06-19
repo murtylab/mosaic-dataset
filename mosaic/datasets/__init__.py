@@ -3,3 +3,4 @@ from .generic_object_decoding import GenericObjectDecodingSingleSubject
 from .nsd import NSDSingleSubject
 from .things_fmri import ThingsFMRISingleSubject
 from .deeprecon import DeepReconSingleSubject
+from .multi_subject import MultiSubjectDataset
