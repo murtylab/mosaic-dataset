@@ -20,7 +20,7 @@ class MultiSubjectDataset:
         self.datasets = datasets
         self.index_to_subject_index_mapping = []
 
-        for subject_index, d in datasets:
+        for subject_index, d in enumerate(datasets):
             self.index_to_subject_index_mapping.extend(
                 [subject_index] * len(d)
             )
