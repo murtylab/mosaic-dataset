@@ -33,7 +33,10 @@ class BOLD5000SingleSubject:
 
         assert os.path.exists(self.filename), f"File {self.filename} does not exist. Please check the download."
         ## the filename is an hdf5 file
-        self.data = h5py.File(self.filename, 'r')
+        try:
+            self.data = h5py.File(self.filename, 'r')
+        except OSError:
+            raise OSError(f"Could not read file: {self.filename}. Maybe just it's a failed download?")
         self.all_names = list(self.data['betas'].keys())
 
     def __getitem__(self, index: int) -> dict:
