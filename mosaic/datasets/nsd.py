@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 subject_id_to_file_mapping = {
     1: "sub-01_NSD_crc32-32353cf9.hdf5",
+    2: "sub-02_NSD_crc32-32353cf9.hdf5",
 }
 
 class NSDSingleSubject:
