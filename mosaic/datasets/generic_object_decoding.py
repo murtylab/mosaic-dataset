@@ -4,6 +4,8 @@ import numpy as np
 from ..utils.download import download_file
 from ..utils.folder import make_folder_if_does_not_exist
 from ..constants import BASE_URL
+from ..utils.parcellation import parse_betas
+from tqdm import tqdm
 
 subject_id_to_file_mapping = {
     1: "sub-01_GOD_crc32-3e714d56.hdf5",
@@ -18,6 +20,7 @@ class GenericObjectDecodingSingleSubject:
         self,
         folder: str,
         subject_id: int = 1,
+        cache: bool = True,
     ): 
         assert subject_id in list(subject_id_to_file_mapping.keys()), \
             f"Subject ID {subject_id} is not valid. Please choose from {list(subject_id_to_file_mapping.keys())}."
@@ -39,11 +42,21 @@ class GenericObjectDecodingSingleSubject:
         self.data = h5py.File(self.filename, 'r')
         self.all_names = list(self.data['betas'].keys())
 
+        if cache:
+            self.data = {
+                'betas': {
+                    name: np.array(self.data['betas'][name]) for name in tqdm(self.all_names, desc="Caching betas")
+                }
+            }
+        else:
+            self.data = self.data
+
     def __getitem__(self, index: int) -> dict:
         
         item = np.array(
             self.data['betas'][self.all_names[index]]
         )
+        item = parse_betas(betas=item)
         return {
             'name': self.all_names[index],
             'betas': item,
