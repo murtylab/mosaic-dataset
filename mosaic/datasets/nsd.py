@@ -10,6 +10,7 @@ from tqdm import tqdm
 subject_id_to_file_mapping = {
     1: "sub-01_NSD_crc32-32353cf9.hdf5",
     2: "sub-02_NSD_crc32-32353cf9.hdf5",
+    3: "sub-03_NSD_crc32-32353cf9.hdf5",
 }
 
 class NSDSingleSubject:
@@ -49,11 +50,11 @@ class NSDSingleSubject:
             self.data = self.data
 
     def __getitem__(self, index: int) -> dict:
-        
         item = np.array(
             self.data['betas'][self.all_names[index]]
         )
         item = parse_betas(betas=item)
+
         return {
             'name': self.all_names[index],
             'betas': item,
