@@ -29,7 +29,7 @@ num_subjects = {
 def load(
     name: str,
     subject_id: Union[List[int], str] = 1,
-    folder: str = "data",
+    folder: str = "./mosaic_dataset",
 ):
     ## assert name is valid
     assert name in name_to_dataset_mapping.keys(), \
