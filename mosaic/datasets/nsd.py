@@ -8,9 +8,14 @@ from ..utils.parcellation import parse_betas
 from tqdm import tqdm
 
 subject_id_to_file_mapping = {
-    1: "sub-01_NSD_crc32-32353cf9.hdf5",
-    2: "sub-02_NSD_crc32-32353cf9.hdf5",
-    3: "sub-03_NSD_crc32-32353cf9.hdf5",
+    1: "sub-01_NSD.hdf5",
+    2: "sub-02_NSD.hdf5",
+    3: "sub-03_NSD.hdf5",
+    4: "sub-04_NSD.hdf5",
+    5: "sub-05_NSD.hdf5",
+    6: "sub-06_NSD.hdf5",
+    7: "sub-07_NSD.hdf5",
+    8: "sub-08_NSD.hdf5",
 }
 
 class NSDSingleSubject:
