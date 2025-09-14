@@ -8,11 +8,11 @@ from ..utils.parcellation import parse_betas
 from tqdm import tqdm
 
 subject_id_to_file_mapping = {
-    1: "sub-01_GOD_crc32-3e714d56.hdf5",
-    2: "sub-02_GOD_crc32-a9f461c6.hdf5",
-    3: "sub-03_GOD_crc32-d5783090.hdf5",
-    4: "sub-04_GOD_crc32-3723b278.hdf5",
-    5: "sub-05_GOD_crc32-9761c38d.hdf5",
+    1: "sub-01_GOD.hdf5",
+    2: "sub-02_GOD.hdf5",
+    3: "sub-03_GOD.hdf5",
+    4: "sub-04_GOD.hdf5",
+    5: "sub-05_GOD.hdf5",
 }
 
 class GenericObjectDecodingSingleSubject:

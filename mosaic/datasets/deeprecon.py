@@ -6,9 +6,9 @@ from ..utils.folder import make_folder_if_does_not_exist
 from ..constants import BASE_URL
 
 subject_id_to_file_mapping = {
-    1: "sub-01_deeprecon_crc32-f4d0e132.hdf5",
-    2: "sub-02_deeprecon_crc32-137049f9.hdf5",
-    3: "sub-03_deeprecon_crc32-c88ea8b8.hdf5"
+    1: "sub-01_deeprecon.hdf5",
+    2: "sub-02_deeprecon.hdf5",
+    3: "sub-03_deeprecon.hdf5"
 }
 
 class DeepReconSingleSubject:

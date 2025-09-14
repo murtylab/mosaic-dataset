@@ -1,1 +1,1 @@
-BASE_URL = "https://d3ctas52djku5l.cloudfront.net"
+BASE_URL = "https://mosaicfmri.s3.amazonaws.com/singlesubject_hdf5"

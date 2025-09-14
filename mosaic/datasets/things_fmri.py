@@ -6,9 +6,9 @@ from ..utils.folder import make_folder_if_does_not_exist
 from ..constants import BASE_URL
 
 subject_id_to_file_mapping = {
-    1: "sub-01_THINGS_crc32-a8b1d77b.hdf5",
-    2: "sub-02_THINGS_crc32-3bc9008c.hdf5",
-    3: "sub-03_THINGS_crc32-0ceefdd6.hdf5"
+    1: "sub-01_THINGS.hdf5",
+    2: "sub-02_THINGS.hdf5",
+    3: "sub-03_THINGS.hdf5"
 }
 
 class ThingsFMRISingleSubject:

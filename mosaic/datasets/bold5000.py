@@ -6,9 +6,13 @@ from ..utils.folder import make_folder_if_does_not_exist
 from ..constants import BASE_URL
 
 subject_id_to_file_mapping = {
-    1: "sub-01_BOLD5000_crc32-4d74c3d3.hdf5",
-    2: "sub-02_BOLD5000_crc32-dac70140.hdf5",
+    1: "sub-01_BOLD5000.hdf5",
+    2: "sub-02_BOLD5000.hdf5",
+    3: "sub-03_BOLD5000.hdf5",
+    4: "sub-04_BOLD5000.hdf5",
 }
+
+
 
 class BOLD5000SingleSubject:
     def __init__(
