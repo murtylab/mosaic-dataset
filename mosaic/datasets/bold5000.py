@@ -4,6 +4,7 @@ import numpy as np
 from ..utils.download import download_file
 from ..utils.folder import make_folder_if_does_not_exist
 from ..constants import BASE_URL
+from ..utils.parcellation import parse_betas
 
 subject_id_to_file_mapping = {
     1: "sub-01_BOLD5000.hdf5",
@@ -48,6 +49,7 @@ class BOLD5000SingleSubject:
         item = np.array(
             self.data['betas'][self.all_names[index]]
         )
+        item = parse_betas(betas=item)
         return {
             'name': self.all_names[index],
             'betas': item,
