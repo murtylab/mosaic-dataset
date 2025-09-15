@@ -2,6 +2,7 @@ BASE_URL = "https://mosaicfmri.s3.amazonaws.com/singlesubject_hdf5"
 
 ## sourced from htp_utils.mmp i.e Glasser et.al. Multi-Modal Parcellation (MMP 1.0) 
 ## see: https://rmldj.github.io/hcp-utils/
+## to know more about the ROIs, see: https://link.springer.com/article/10.1007/s00429-021-02421-6
 region_of_interest_labels = {
     '': 0,
     'L_1': 51,
