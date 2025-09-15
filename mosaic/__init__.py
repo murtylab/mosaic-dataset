@@ -22,8 +22,9 @@ num_subjects = {
     "bold5000": 2,
     "deeprecon": 3,
     "generic_object_decoding": 5,
-    "nsd": 1,
-    "things_fmri": 3
+    "nsd": 8,
+    "things_fmri": 3,
+    "deep_recon": 3,
 }
 
 def load(
