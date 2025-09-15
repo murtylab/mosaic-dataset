@@ -4,3 +4,4 @@ from .nsd import NSDSingleSubject
 from .things_fmri import ThingsFMRISingleSubject
 from .deeprecon import DeepReconSingleSubject
 from .multi_subject import MultiSubjectDataset
+from .bold_moments import BOLDMomentsSingleSubject
