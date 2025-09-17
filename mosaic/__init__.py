@@ -9,6 +9,8 @@ from .datasets import (
     DeepReconSingleSubject,
     MultiSubjectDataset,
     BOLDMomentsSingleSubject,
+    NODSingleSubject,
+    HADSingleSubject,
 )
 
 name_to_dataset_mapping = {
@@ -18,6 +20,8 @@ name_to_dataset_mapping = {
     "things_fmri": ThingsFMRISingleSubject,
     "deep_recon": DeepReconSingleSubject,
     "bold_moments": BOLDMomentsSingleSubject,
+    "nod": NODSingleSubject,
+    "had": HADSingleSubject,
 }
 
 num_subjects = {
@@ -28,6 +32,8 @@ num_subjects = {
     "things_fmri": 3,
     "deep_recon": 3,
     "bold_moments": 10,
+    "nod": 30,
+    "had": 30,
 }
 
 def load(

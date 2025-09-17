@@ -5,3 +5,5 @@ from .things_fmri import ThingsFMRISingleSubject
 from .deeprecon import DeepReconSingleSubject
 from .multi_subject import MultiSubjectDataset
 from .bold_moments import BOLDMomentsSingleSubject
+from .nod import NODSingleSubject
+from .had import HADSingleSubject
