@@ -5,7 +5,6 @@ from ..utils.download import download_file
 from ..utils.folder import make_folder_if_does_not_exist
 from ..constants import BASE_URL
 from ..utils.parcellation import parse_betas
-from tqdm import tqdm
 
 subject_id_to_file_mapping = {
     i: f"sub-{i:02d}_HAD.hdf5" for i in range(1, 31)
@@ -16,7 +15,6 @@ class HADSingleSubject:
         self,
         folder: str,
         subject_id: int = 1,
-        cache: bool = True,
     ): 
         assert subject_id in list(subject_id_to_file_mapping.keys()), \
             f"Subject ID {subject_id} is not valid. Please choose from {list(subject_id_to_file_mapping.keys())}."
@@ -37,15 +35,6 @@ class HADSingleSubject:
         ## the filename is an hdf5 file
         self.data = h5py.File(self.filename, 'r')
         self.all_names = list(self.data['betas'].keys())
-
-        if cache:
-            self.data = {
-                'betas': {
-                    name: np.array(self.data['betas'][name]) for name in tqdm(self.all_names, desc="Caching betas")
-                }
-            }
-        else:
-            self.data = self.data
 
     def __getitem__(self, index: int) -> dict:
         item = np.array(
