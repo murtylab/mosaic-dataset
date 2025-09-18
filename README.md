@@ -32,10 +32,12 @@ dataset = mosaic.load(
 
 visualize(
     betas=dataset[0]["betas"],
+    ## set rois to None if you want to visualize all of the rois
     rois=[
         "L_FFC",
         "R_FFC",
     ],
+    ## other modes are: 'white', 'midthickness', 'pial', 'inflated', 'very_inflated', 'flat', 'sphere'
     mode = "midthickness",
     save_as = "plot.html",
 )
