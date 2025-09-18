@@ -19,7 +19,7 @@ dataset = mosaic.load(
 print(dataset[0])
 ```
 
-Visualization example
+Visualization
 
 ```python
 import mosaic
