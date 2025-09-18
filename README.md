@@ -16,3 +16,27 @@ dataset = mosaic.load(
 
 print(dataset[0])
 ```
+
+Visualization example
+
+```python
+import mosaic
+from mosaic.utils import visualize
+from IPython.display import IFrame
+
+dataset = mosaic.load(
+    name="bold_moments", 
+    subject_id=1,
+    folder="/research/datasets/mosaic-dataset"
+)
+
+visualize(
+    betas=dataset[0]["betas"],
+    rois=[
+        "L_FFC",
+        "R_FFC",
+    ],
+    mode = "midthickness",
+    save_as = "plot.html",
+)
+```
