@@ -25,7 +25,7 @@ name_to_dataset_mapping = {
 }
 
 num_subjects = {
-    "bold5000": 2,
+    "bold5000": 4,
     "deeprecon": 3,
     "generic_object_decoding": 5,
     "nsd": 8,
