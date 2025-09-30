@@ -4,3 +4,4 @@ mosaic_dataset.egg-info/
 *.html
 .ipynb_checkpoints/
 mosaic_models/
+mosaic_dataset/
