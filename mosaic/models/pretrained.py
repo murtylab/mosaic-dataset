@@ -3,6 +3,10 @@ import torch
 import torchvision.models as models
 from ..constants import BASE_URL
 from ..utils.download import download_file
+from .transforms import SelectROIs
+from .readout import SpatialXFeatureLinear
+from .. import num_subjects
+import torch.nn as nn
 
 valid_backbone_names = ["alexnet", "resnet18", "squeezenet", "swint"]
 
@@ -26,7 +30,7 @@ model_filenames = {
     ),
 }
 
-from .architectures import AlexNetCore, ResNet18Core, SqueezeNet1_1Core, SwinTCore
+from .architectures import AlexNetCore, ResNet18Core, SqueezeNet1_1Core, SwinTCore, Encoder, EncoderMultiHead
 from typing import Union
 import requests
 
@@ -42,18 +46,18 @@ def get_pretrained_backbone(
     if not os.path.exists(path = folder):
         os.mkdir(folder)
 
-    if "AlexNet" == backbone_name:
+    if "alexnet" == backbone_name:
         bo_core = AlexNetCore(add_batchnorm=True)  # brain optimized pretrained
-    elif "ResNet18" == backbone_name:
+    elif "resnet18" == backbone_name:
         bo_core = ResNet18Core()
-    elif "SqueezeNet1_1" == backbone_name:
+    elif "squeezenet" == backbone_name:
         bo_core = SqueezeNet1_1Core(add_batchnorm=True)
-    elif "SwinT" == backbone_name:
+    elif "swint" == backbone_name:
         bo_core = SwinTCore()
     # elif "CNN8" == backbone_name:
     #     bo_core = C8NonSteerableCNN()
     else:
-        print(f"Backbone name {backbone_name} not recognized.")
+        raise ValueError(f"Invalid backbone_name {backbone_name}. Must be one of {valid_backbone_names}")
 
     # get the correct number of output vertices
     if vertices == "visual":
@@ -80,46 +84,56 @@ def get_pretrained_backbone(
             save_as=checkpoint_filename,
         )
 
+    ROI_selection = SelectROIs(
+        selected_rois=rois,
+        nan_indices_dataset_filename="./nan_indices_dataset.npy",
+        roi_list_filename="./hcp_glasser_roilist.txt",
+    )
+    num_vertices = len(ROI_selection.selected_roi_indices)
+    print(f"number of vertices/regression targets: {num_vertices}")
 
-    # ROI_selection = SelectROIs(selected_rois=rois)
-    # num_vertices = len(ROI_selection.selected_roi_indices)
-    # print(f"number of vertices/regression targets: {num_vertices}")
+    out_shape = bo_core(torch.randn(1, 3, 224,224)).size()[1:]
+    readout_kwargs = {
+        "in_shape": out_shape,
+        "outdims": 22,
+        "bias": True,
+        "normalize": True,
+        "init_noise": 1e-3,
+        "constrain_pos": False,
+        "positive_weights": False,
+        "positive_spatial": False,
+        "outdims": num_vertices}
+    if framework == 'singlehead':
+        #subjects doesn't affect the initialization of single head
+        readout = SpatialXFeatureLinear(in_shape=readout_kwargs['in_shape'],
+                                        outdims=readout_kwargs['outdims'],
+                                        init_noise=readout_kwargs['init_noise'],
+                                        normalize=readout_kwargs['normalize'],
+                                        constrain_pos=readout_kwargs['constrain_pos'],
+                                        bias=readout_kwargs['bias'])
+        bo_model = Encoder(bo_core, readout).to(device)
+    elif framework == 'multihead':
+        #get the correct number of prediction subjects
+        numsubs = {"NSD": 8, "BOLD5000": 4, "BMD": 10, "THINGS": 3, "NOD": 30, "HAD": 30, "GOD": 5, "deeprecon": 3}
+        training_subjects = []
+        if subjects == 'all':
+            for dset, nsubs in numsubs.items():
+                training_subjects += [f"sub-{x:02}_{dset}" for x in range(1, numsubs[dset]+1)]
 
-    # out_shape = bo_core(torch.randn(1, 3, 224,224)).size()[1:]
-    # readout_kwargs = {
-    #     "in_shape": out_shape,
-    #     "outdims": 22,
-    #     "bias": True,
-    #     "normalize": True,
-    #     "init_noise": 1e-3,
-    #     "constrain_pos": False,
-    #     "positive_weights": False,
-    #     "positive_spatial": False}
-    # if framework == 'singlehead':
-    #     #subjects doesn't affect the initialization of single head
-    #     readout = SpatialXFeatureLinear(readout_kwargs['in_shape'],
-    #                                     readout_kwargs['outdims'],
-    #                                     init_noise=readout_kwargs['init_noise'],
-    #                                     normalize=readout_kwargs['normalize'],
-    #                                     constrain_pos=readout_kwargs['constrain_pos'],
-    #                                     bias=readout_kwargs['bias'])
-    #     bo_model = Encoder(bo_core, readout).to(device)
-    # elif framework == 'multihead':
-    #     #get the correct number of prediction subjects
-    #     numsubs = {"NSD": 8, "BOLD5000": 4, "BMD": 10, "THINGS": 3, "NOD": 30, "HAD": 30, "GOD": 5, "deeprecon": 3}
-    #     training_subjects = []
-    #     if subjects == 'all':
-    #         for dset, nsubs in numsubs.items():
-    #             training_subjects += [f"sub-{x:02}_{dset}" for x in range(1, numsubs[dset]+1)]
+        elif subjects in list(numsubs.keys()): #user specified a dataset, meaning all subjects in this dataset
+            training_subjects = [f"sub-{x:02}_{subjects}" for x in range(1, numsubs[subjects]+1)]
+        else:
+            training_subjects = subjects #just one individual subject specified
+        training_subjects_sorted = sorted(training_subjects,key=lambda x: (x.split('_')[1], int(x.split('_')[0].split('-')[-1]))) #this is how the brain optimized model sorted them
 
-    #     elif model_cfg['subjects'] in list(numsubs.keys()): #user specified a dataset, meaning all subjects in this dataset
-    #         training_subjects = [f"sub-{x:02}_{model_cfg['subjects']}" for x in range(1, numsubs[model_cfg['subjects']]+1)]
-    #     else:
-    #         training_subjects = model_cfg['subjects'] #just one individual subject specified
-    #     training_subjects_sorted = sorted(training_subjects,key=lambda x: (x.split('_')[1], int(x.split('_')[0].split('-')[-1]))) #this is how the brain optimized model sorted them
+        subjectID2idx = {subjectID: idx for idx, subjectID in enumerate(training_subjects_sorted)}
+        bo_model = EncoderMultiHead(bo_core,
+                                    SpatialXFeatureLinear,
+                                    subjectID2idx = subjectID2idx,
+                                    **readout_kwargs).to(device)
 
-    #     subjectID2idx = {subjectID: idx for idx, subjectID in enumerate(training_subjects_sorted)}
-    #     bo_model = EncoderMultiHead(bo_core,
-    #                                 SpatialXFeatureLinear,
-    #                                 subjectID2idx = subjectID2idx,
-    #                                 **readout_kwargs).to(device)
+        bo_model = nn.DataParallel(bo_model) #must use dataparallel because this is how the model was trained and weights saved
+        state_dict = torch.load(checkpoint_filename)
+        bo_model.load_state_dict(state_dict, strict=True)
+        bo_model = bo_model.eval()
+        return bo_model
