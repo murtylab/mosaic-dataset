@@ -1,13 +1,11 @@
-from dotenv import load_dotenv
-load_dotenv()
 import numpy as np
 import pandas as pd
 import os
-import torch
 import hcp_utils as hcp
+from ..constants import nan_indices
 
 class SelectROIs:
-    def __init__(self, selected_rois: list[str], nan_indices_dataset_filename: str, roi_list_filename: str, remove_nan_vertices: bool=True) -> None:
+    def __init__(self, selected_rois: list[str], roi_list_filename: str, remove_nan_vertices: bool=True) -> None:
         """
         Specify which rois you want to include in your analysis. Can either specify the exact roi or glasser group. 
         Stores the roi indices to index into the whole brain betas to extract the brain activity of the desired ROIs.
@@ -27,7 +25,6 @@ class SelectROIs:
           1 and 2 and both hemispheres of the roi PPA2. It removes vertices that from this group that have been NaN somewhere in the dataset
         """
         assert os.path.exists(roi_list_filename), f"Invalid roi_list_filename: {self.roi_list_filename}"
-        assert os.path.exists(nan_indices_dataset_filename), f"Invalid nan_indices_dataset_filename: {nan_indices_dataset_filename}"
         self.roi_list_filename = roi_list_filename
         core_rois_all = self._initialize_roi_mappings() #initalizes the six mappings of self.index_to_roi, index_to_group, roi_to_index, index_to_group, group_to_index, group_to_roi
         lh_rois_all = [f"L_{roi}" for roi in core_rois_all]
@@ -46,7 +43,7 @@ class SelectROIs:
         #useful parameters
         self.numvertices = len(hcp.mmp.map_all)
         #a numpy array of indices in fsLR32k space that are undefined for at least one trial across all datasets
-        self.nan_indices_dataset = np.load(nan_indices_dataset_filename) 
+        self.nan_indices_dataset = np.array(nan_indices)
         
         #now get the indices for the ROIs you want
         if selected_rois == 'all':
