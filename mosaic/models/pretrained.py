@@ -86,8 +86,6 @@ def get_pretrained_backbone(
 
     ROI_selection = SelectROIs(
         selected_rois=rois,
-        nan_indices_dataset_filename="./nan_indices_dataset.npy",
-        roi_list_filename="./hcp_glasser_roilist.txt",
     )
     num_vertices = len(ROI_selection.selected_roi_indices)
     # print(f"number of vertices/regression targets: {num_vertices}")
@@ -95,7 +93,6 @@ def get_pretrained_backbone(
     out_shape = bo_core(torch.randn(1, 3, 224,224)).size()[1:]
     readout_kwargs = {
         "in_shape": out_shape,
-        "outdims": 22,
         "bias": True,
         "normalize": True,
         "init_noise": 1e-3,

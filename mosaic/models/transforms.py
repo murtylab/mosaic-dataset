@@ -3,9 +3,10 @@ import pandas as pd
 import os
 import hcp_utils as hcp
 from ..constants import nan_indices
+from ..constants import hcp_glasser_roilist
 
 class SelectROIs:
-    def __init__(self, selected_rois: list[str], roi_list_filename: str, remove_nan_vertices: bool=True) -> None:
+    def __init__(self, selected_rois: list[str], remove_nan_vertices: bool=True) -> None:
         """
         Specify which rois you want to include in your analysis. Can either specify the exact roi or glasser group. 
         Stores the roi indices to index into the whole brain betas to extract the brain activity of the desired ROIs.
@@ -24,8 +25,6 @@ class SelectROIs:
         roi_transform = SelectROIs(rois=['GlasserGroup_1', 'GlasserGroup_2', 'PPA2']) #uses the indices of all rois in glasser groups
           1 and 2 and both hemispheres of the roi PPA2. It removes vertices that from this group that have been NaN somewhere in the dataset
         """
-        assert os.path.exists(roi_list_filename), f"Invalid roi_list_filename: {self.roi_list_filename}"
-        self.roi_list_filename = roi_list_filename
         core_rois_all = self._initialize_roi_mappings() #initalizes the six mappings of self.index_to_roi, index_to_group, roi_to_index, index_to_group, group_to_index, group_to_roi
         lh_rois_all = [f"L_{roi}" for roi in core_rois_all]
         rh_rois_all = [f"R_{roi}" for roi in core_rois_all]
@@ -74,7 +73,6 @@ class SelectROIs:
         if remove_nan_vertices:
             self.selected_roi_indices = [idx for idx in self.selected_roi_indices if idx not in self.nan_indices_dataset]
         self.selected_roi_indices = sorted(self.selected_roi_indices) #sort the indices. sometimes indexing (like with the hdf5 file) needs it to be sorted.
-        
 
 
     def __call__(self, sample, hdf5=None) -> np.ndarray:
@@ -126,7 +124,8 @@ class SelectROIs:
         RETURNS
         core_rois_all, list of core rois (meaning no left or right hemisphere prefix)
         """
-        tmp = pd.read_table(self.roi_list_filename, sep=',')
+        tmp = pd.DataFrame(hcp_glasser_roilist, index=None)
+        
         core_rois_all = tmp['ROI'].values
         lh_rois_all = [f"L_{roi}" for roi in core_rois_all]
         rh_rois_all = [f"R_{roi}" for roi in core_rois_all]
@@ -160,5 +159,4 @@ class SelectROIs:
             rois_in_group = self.group_to_roi[f"GlasserGroup_{x}"]
             for roi in rois_in_group:
                 self.group_to_index[f"GlasserGroup_{x}"].extend(self.roi_to_index[roi])
-
         return core_rois_all
