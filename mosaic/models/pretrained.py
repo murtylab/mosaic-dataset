@@ -166,7 +166,7 @@ def get_pretrained_backbone(
         bo_model = nn.DataParallel(
             bo_model
         )  # must use dataparallel because this is how the model was trained and weights saved
-        state_dict = torch.load(checkpoint_filename)
+        state_dict = torch.load(checkpoint_filename, map_location="cpu")
         bo_model.load_state_dict(state_dict, strict=True)
         bo_model = bo_model.eval()
         return (
