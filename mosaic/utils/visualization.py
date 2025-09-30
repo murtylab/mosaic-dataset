@@ -38,7 +38,7 @@ def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str) -> None:
 
 
 def visualize(
-    betas: dict, save_as: str, mode="inflated", rois: list[str] = None, show=False
+    betas: dict, save_as: str, mode="inflated", rois: list[str] = None, show=True
 ) -> None:
 
     assert isinstance(
