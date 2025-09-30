@@ -1,5 +1,6 @@
 # mosaic-dataset
-python module to load the mosaic dataset (Lahner et al.)
+
+Load the mosaic dataset (Lahner et al.) and the associated pre-trained models
 
 ```bash
 pip install mosaic-dataset
