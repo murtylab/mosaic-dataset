@@ -1,5 +1,7 @@
 # mosaic-dataset
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/murtylab/mosaic-dataset/blob/main/examples/mosaic-starter.ipynb) 
+
 Load the mosaic dataset (Lahner et al.) and the associated pre-trained models
 
 ```bash
