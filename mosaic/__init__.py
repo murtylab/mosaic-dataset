@@ -1,6 +1,7 @@
 import os
 from typing import Union, List
 from torch.utils.data import ConcatDataset
+from .models import from_pretrained
 
 from .datasets import (
     BOLD5000SingleSubject,

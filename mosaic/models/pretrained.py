@@ -1,14 +1,14 @@
 import os
 import torch
-import torchvision.models as models
 from ..constants import BASE_URL
 from ..utils.download import download_file
 from .transforms import SelectROIs
 from .readout import SpatialXFeatureLinear
-from .. import num_subjects
 import torch.nn as nn
 
 valid_backbone_names = ["alexnet", "resnet18", "squeezenet", "swint"]
+valid_vertices = ["visual"]
+valid_frameworks = ["multihead"]
 
 model_folder = "brain_optimized_checkpoints"
 
@@ -65,9 +65,9 @@ def get_pretrained_backbone(
     elif vertices == "all":
         rois = [f"GlasserGroup_{x}" for x in range(1, 23)]
 
-    print(
-        f"Loading pretrained backbone: {backbone_name} vertices: {vertices} framework: {framework} subjects: {subjects}"
-    )
+    # print(
+    #     f"Loading pretrained backbone: {backbone_name} vertices: {vertices} framework: {framework} subjects: {subjects}"
+    # )
 
     checkpoint_filename = os.path.join(
         folder,
@@ -90,7 +90,7 @@ def get_pretrained_backbone(
         roi_list_filename="./hcp_glasser_roilist.txt",
     )
     num_vertices = len(ROI_selection.selected_roi_indices)
-    print(f"number of vertices/regression targets: {num_vertices}")
+    # print(f"number of vertices/regression targets: {num_vertices}")
 
     out_shape = bo_core(torch.randn(1, 3, 224,224)).size()[1:]
     readout_kwargs = {
@@ -136,4 +136,4 @@ def get_pretrained_backbone(
         state_dict = torch.load(checkpoint_filename)
         bo_model.load_state_dict(state_dict, strict=True)
         bo_model = bo_model.eval()
-        return bo_model
+        return bo_model.module #return the underlying model, not the dataparallel wrapper
