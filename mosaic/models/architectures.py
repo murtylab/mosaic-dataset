@@ -600,16 +600,18 @@ class EncoderMultiHead(nn.Module):
         self.core = core
         self.subject_readouts = nn.ModuleDict({str(subjectID): readout_class(**readout_kwargs) for subjectID in self.subjectID2idx.keys()})       
         self.confidence_scores = confidence_scores or {subjectID: 1.0 for subjectID in self.subjectID2idx.keys()}
+        self.training = False
 
-    def forward(self, x, subjectID_value, data_key=None, detach_core=False, fake_relu=False, **kwargs):
+    def forward(self, x, subjectID_value=None, data_key=None, detach_core=False, fake_relu=False, **kwargs):
         # Get core features
         core_output = self.core(x)
-
+        if subjectID_value is None:
+            subjectID_value = list(self.subjectID2idx.values())
         # Register a backward hook for gradient scaling on core output
         if not detach_core and self.training:
             batch_confidence_scores = []
             for i in range(len(subjectID_value)):
-                subjectID_str = self.idx2subjectID[subjectID_value[i].item()]
+                subjectID_str = self.idx2subjectID[subjectID_value[i]]
                 confidence = self.confidence_scores.get(subjectID_str, 1.0)
                 batch_confidence_scores.append(confidence)
             
@@ -629,7 +631,8 @@ class EncoderMultiHead(nn.Module):
         outputs = []
         for i in range(batch_size):
             # Get subject information for this sample
-            subjectID_str = self.idx2subjectID[subjectID_value[i].item()]
+            # raise AssertionError(self.idx2subjectID, subjectID_value[i])
+            subjectID_str = self.idx2subjectID[subjectID_value[i]]
             
             # Process this sample with its corresponding readout
             if "sample" in kwargs:
