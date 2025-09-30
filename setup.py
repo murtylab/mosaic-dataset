@@ -3,15 +3,29 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+"""
+release checklist:
+1. update version on `setup.py`
+2. update `__version__` on `torch_dreams/__init__.py`
+3. run tests with this command `pytest torch_dreams/tests/`
+4. commit changes (`setup.py`, `torch_dreams/__init__.py`) and push
+5. make release on PyPI. Run the following commands:
+    5.1 `python3 setup.py sdist bdist_wheel`
+    5.2 (optional) `python3 -m pip install --user --upgrade twine`
+    5.3 `python3 -m twine upload dist/*`
+6. make a new release on github with the latest version
+"""
+
+
 setuptools.setup(
     name="mosaic-dataset",
     version="0.0.0",
-    description="mosaic",
+    description="A scalable framework for fMRI dataset aggregation and modeling of human vision",
     author="Benjamin Lahner, Mayukh Deb, N. Apurva Ratan Murty, Aude Oliva",
     author_email="blahner@mit.edu; mayukh@gatech.edu; ratan@gatech.edu; oliva@mit.edu",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/mayukhdeb/mosaic-dataset",
+    url="https://github.com/murtylab/mosaic-dataset",
     packages=setuptools.find_packages(),
     install_requires=[
         line.strip()
