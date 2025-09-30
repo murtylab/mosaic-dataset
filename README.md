@@ -45,3 +45,15 @@ visualize(
     save_as = "plot.html",
 )
 ```
+Loading pre-trained models
+
+```python
+import mosaic
+
+model = mosaic.from_pretrained(
+    backbone_name="resnet18",
+    vertices="visual",
+    framework="multihead",
+    subjects="all"
+)
+```
