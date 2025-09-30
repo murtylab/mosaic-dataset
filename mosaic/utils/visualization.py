@@ -4,11 +4,20 @@ import hcp_utils as hcp
 import nilearn.plotting as plotting
 from mosaic.constants import region_of_interest_labels
 
-valid_modes = ['white', 'midthickness', 'pial', 'inflated', 'very_inflated', 'flat', 'sphere']
+valid_modes = [
+    "white",
+    "midthickness",
+    "pial",
+    "inflated",
+    "very_inflated",
+    "flat",
+    "sphere",
+]
 valid_rois = list(region_of_interest_labels.keys())
 
-parcellation  = hcp.mmp
+parcellation = hcp.mmp
 parcel_map = parcellation.map_all
+
 
 def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str) -> None:
     plotting_mode = getattr(hcp.mesh, mode)
@@ -17,11 +26,14 @@ def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str) -> None:
         plotting_mode,
         surf_map=hcp.cortex_data(data),
         threshold=0.0,
-        bg_map=hcp.mesh.sulc
+        bg_map=hcp.mesh.sulc,
     )
     html_thing.save_as_html(save_as)
 
-def visualize(betas: dict, save_as: str, mode = "inflated", rois: list[str] = None) -> None:
+
+def visualize(
+    betas: dict, save_as: str, mode="inflated", rois: list[str] = None
+) -> None:
 
     assert isinstance(
         betas, dict
@@ -33,15 +45,15 @@ def visualize(betas: dict, save_as: str, mode = "inflated", rois: list[str] = No
         rois = list(betas.keys())
     else:
         for roi in rois:
-            assert roi in valid_rois, f"Invalid roi: {roi}\n Expected it to be one of: {valid_rois}"
+            assert (
+                roi in valid_rois
+            ), f"Invalid roi: {roi}\n Expected it to be one of: {valid_rois}"
 
     for roi in rois:
         data_to_visualize[parcel_map == region_of_interest_labels[roi]] = betas[roi]
 
-    assert mode in valid_modes, f"Expected mode to be one of {valid_modes}, got {mode} instead"
+    assert (
+        mode in valid_modes
+    ), f"Expected mode to be one of {valid_modes}, got {mode} instead"
 
-    return visualize_voxel_data(
-        data=data_to_visualize,
-        save_as=save_as,
-        mode=mode
-    )
+    return visualize_voxel_data(data=data_to_visualize, save_as=save_as, mode=mode)

@@ -16,26 +16,23 @@ class MosaicInference:
         self,
         model,
         batch_size: int = 32,
-        device: str = 'cuda' if torch.cuda.is_available() else 'cpu',
+        device: str = "cuda" if torch.cuda.is_available() else "cpu",
     ):
-        self.model=model.to(device).eval()
-        self.batch_size=batch_size
-        self.device=device
+        self.model = model.to(device).eval()
+        self.batch_size = batch_size
+        self.device = device
         self.model.eval()
 
     @torch.no_grad()
-    def run(
-        self,
-        images: list[Image.Image]
-    ):
+    def run(self, images: list[Image.Image]):
         images = [imagenet_transforms(image) for image in images]
         images = torch.stack(images, dim=0)
-        
+
         results = []
 
         # Handles the last batch even if it's smaller than batch_size
         for i in range(0, len(images), self.batch_size):
-            batch = images[i:i+self.batch_size].to(self.device)
+            batch = images[i : i + self.batch_size].to(self.device)
             outputs = self.model(batch)
             results.append(outputs.cpu())
         results = torch.cat(results, dim=0)

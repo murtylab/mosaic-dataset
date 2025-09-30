@@ -32,13 +32,22 @@ class Readout(Module):
     bias: Parameter
 
     def initialize(self, *args: Any, **kwargs: Any) -> None:
-        raise NotImplementedError("initialize is not implemented for ", self.__class__.__name__)
+        raise NotImplementedError(
+            "initialize is not implemented for ", self.__class__.__name__
+        )
 
-    def regularizer(self, reduction: Reduction = "sum", average: Optional[bool] = None) -> torch.Tensor:
-        raise NotImplementedError("regularizer is not implemented for ", self.__class__.__name__)
+    def regularizer(
+        self, reduction: Reduction = "sum", average: Optional[bool] = None
+    ) -> torch.Tensor:
+        raise NotImplementedError(
+            "regularizer is not implemented for ", self.__class__.__name__
+        )
 
     def apply_reduction(
-        self, x: torch.Tensor, reduction: Reduction = "mean", average: Optional[bool] = None
+        self,
+        x: torch.Tensor,
+        reduction: Reduction = "mean",
+        average: Optional[bool] = None,
     ) -> torch.Tensor:
         """
         Applies a reduction on the output of the regularizer.
@@ -63,18 +72,25 @@ class Readout(Module):
                 f"Reduction method '{reduction}' is not recognized. Valid values are ['mean', 'sum', None]"
             )
 
-    def resolve_reduction_method(self, reduction: Reduction = "mean", average: Optional[bool] = None) -> Reduction:
+    def resolve_reduction_method(
+        self, reduction: Reduction = "mean", average: Optional[bool] = None
+    ) -> Reduction:
         """
         Helper method which transforms the old and deprecated argument 'average' in the regularizer into
         the new argument 'reduction' (if average is not None). This is done in order to agree with the terminology in pytorch).
         """
         if average is not None:
-            warnings.warn("Use of 'average' is deprecated. Please consider using `reduction` instead")
+            warnings.warn(
+                "Use of 'average' is deprecated. Please consider using `reduction` instead"
+            )
             reduction = "mean" if average else "sum"
         return reduction
 
     def resolve_deprecated_gamma_readout(
-        self, feature_reg_weight: Optional[float], gamma_readout: Optional[float], default: float = 1.0
+        self,
+        feature_reg_weight: Optional[float],
+        gamma_readout: Optional[float],
+        default: float = 1.0,
     ) -> float:
         if gamma_readout is not None:
             warnings.warn(
@@ -216,7 +232,10 @@ class FullFactorized2d(Readout):
         return weight
 
     def regularizer(self, reduction="sum", average=None):
-        return self.l1(reduction=reduction, average=average) * self.spatial_and_feature_reg_weight
+        return (
+            self.l1(reduction=reduction, average=average)
+            * self.spatial_and_feature_reg_weight
+        )
 
     def l1(self, reduction="sum", average=None):
         reduction = self.resolve_reduction_method(reduction=reduction, average=average)
@@ -226,7 +245,9 @@ class FullFactorized2d(Readout):
         n = self.outdims
         c, h, w = self.in_shape
         ret = (
-            self.normalized_spatial.view(self.outdims, -1).abs().sum(dim=1, keepdim=True)
+            self.normalized_spatial.view(self.outdims, -1)
+            .abs()
+            .sum(dim=1, keepdim=True)
             * self.features.view(self.outdims, -1).abs().sum(dim=1)
         ).sum()
         if reduction == "mean":
@@ -268,12 +289,16 @@ class FullFactorized2d(Readout):
                 self._features = nn.Parameter(
                     torch.Tensor(n_match_ids, c)
                 )  # feature weights for each channel of the core
-            self.scales = nn.Parameter(torch.Tensor(self.outdims, 1))  # feature weights for each channel of the core
+            self.scales = nn.Parameter(
+                torch.Tensor(self.outdims, 1)
+            )  # feature weights for each channel of the core
             _, sharing_idx = np.unique(match_ids, return_inverse=True)
             self.register_buffer("feature_sharing_index", torch.from_numpy(sharing_idx))
             self._shared_features = True
         else:
-            self._features = nn.Parameter(torch.Tensor(self.outdims, c))  # feature weights for each channel of the core
+            self._features = nn.Parameter(
+                torch.Tensor(self.outdims, c)
+            )  # feature weights for each channel of the core
             self._shared_features = False
 
     def forward(self, x, shift=None, **kwargs):
@@ -285,7 +310,9 @@ class FullFactorized2d(Readout):
         c, h, w = x.size()[1:]
         c_in, h_in, w_in = self.in_shape
         if (c_in, w_in, h_in) != (c, w, h):
-            raise ValueError("the specified feature map dimension is not the readout's expected input dimension")
+            raise ValueError(
+                "the specified feature map dimension is not the readout's expected input dimension"
+            )
 
         y = torch.einsum("ncwh,owh->nco", x, self.normalized_spatial)
         y = torch.einsum("nco,oc->no", y, self.features)
@@ -295,11 +322,20 @@ class FullFactorized2d(Readout):
 
     def __repr__(self):
         c, h, w = self.in_shape
-        r = self.__class__.__name__ + " (" + "{} x {} x {}".format(c, w, h) + " -> " + str(self.outdims) + ")"
+        r = (
+            self.__class__.__name__
+            + " ("
+            + "{} x {} x {}".format(c, w, h)
+            + " -> "
+            + str(self.outdims)
+            + ")"
+        )
         if self.bias is not None:
             r += " with bias"
         if self._shared_features:
-            r += ", with {} features".format("original" if self._original_features else "shared")
+            r += ", with {} features".format(
+                "original" if self._original_features else "shared"
+            )
         if self.normalize:
             r += ", normalized"
         else:
@@ -307,6 +343,7 @@ class FullFactorized2d(Readout):
         for ch in self.children():
             r += "  -> " + ch.__repr__() + "\n"
         return r
+
 
 # Classes for backwards compatibility
 class SpatialXFeatureLinear(FullFactorized2d):

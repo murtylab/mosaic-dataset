@@ -1,5 +1,6 @@
 import os
 
+
 def make_folder_if_does_not_exist(folder: str):
     print(f"Making folder in case it doesnt exist: {folder}")
     os.system(f"mkdir -p {folder}")
