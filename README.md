@@ -2,7 +2,7 @@
 python module to load the mosaic dataset (Lahner et al.)
 
 ```bash
-pip install git+https://github.com/Mayukhdeb/mosaic-dataset.git
+pip install mosaic-dataset
 ```
 
 ```python
@@ -79,4 +79,12 @@ results = inference.run(
 
 ## (2, num_voxels)
 print(results.shape)
+```
+
+Dev Setup
+
+```bash
+pip install git+https://github.com/Mayukhdeb/mosaic-dataset.git
+cd mosaic-dataset
+python setup.py develop
 ```
