@@ -3,6 +3,7 @@ import numpy as np
 import hcp_utils as hcp
 import nilearn.plotting as plotting
 from mosaic.constants import region_of_interest_labels
+from IPython.display import HTML
 
 valid_modes = [
     "white",
@@ -18,6 +19,11 @@ valid_rois = list(region_of_interest_labels.keys())
 parcellation = hcp.mmp
 parcel_map = parcellation.map_all
 
+def render_html_in_notebook(filename: str):
+    with open(filename, "r") as f:
+        html = f.read()
+
+    return HTML(html)
 
 def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str) -> None:
     plotting_mode = getattr(hcp.mesh, mode)
@@ -32,7 +38,7 @@ def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str) -> None:
 
 
 def visualize(
-    betas: dict, save_as: str, mode="inflated", rois: list[str] = None
+    betas: dict, save_as: str, mode="inflated", rois: list[str] = None, show=False
 ) -> None:
 
     assert isinstance(
@@ -56,4 +62,9 @@ def visualize(
         mode in valid_modes
     ), f"Expected mode to be one of {valid_modes}, got {mode} instead"
 
-    return visualize_voxel_data(data=data_to_visualize, save_as=save_as, mode=mode)
+    visualize_voxel_data(data=data_to_visualize, save_as=save_as, mode=mode)
+
+    if show:
+        return render_html_in_notebook(filename=save_as)
+    else:
+        return None
