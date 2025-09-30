@@ -1,4 +1,5 @@
 BASE_URL = "https://mosaicfmri.s3.amazonaws.com"
+default_betas_folder = "fMRIPrepv23_2_0/task_fMRI/betas/GLMsinglev1_2"
 
 ## sourced from htp_utils.mmp i.e Glasser et.al. Multi-Modal Parcellation (MMP 1.0)
 ## see: https://rmldj.github.io/hcp-utils/
