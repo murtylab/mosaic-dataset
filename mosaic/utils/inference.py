@@ -18,7 +18,7 @@ class MosaicInference:
         batch_size: int = 32,
         device: str = 'cuda' if torch.cuda.is_available() else 'cpu',
     ):
-        self.model=model.to(device)
+        self.model=model.to(device).eval()
         self.batch_size=batch_size
         self.device=device
         self.model.eval()
