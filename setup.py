@@ -6,9 +6,7 @@ with open("README.md", "r") as fh:
 """
 release checklist:
 1. update version on `setup.py`
-2. update `__version__` on `torch_dreams/__init__.py`
-3. run tests with this command `pytest torch_dreams/tests/`
-4. commit changes (`setup.py`, `torch_dreams/__init__.py`) and push
+4. commit changes and push
 5. make release on PyPI. Run the following commands:
     5.1 `python3 setup.py sdist bdist_wheel`
     5.2 (optional) `python3 -m pip install --user --upgrade twine`
