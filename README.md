@@ -16,7 +16,7 @@ dataset = mosaic.load(
         "nsd": [2,3],
         "deep_recon": "all",
     },
-    folder="/research/datasets/mosaic-dataset" 
+    folder="./mosaic_dataset" 
 )
 
 print(dataset[0])
@@ -33,7 +33,7 @@ dataset = mosaic.load(
     names_and_subjects={
         "bold_moments": [1],
     },
-    folder="/research/datasets/mosaic-dataset" 
+    folder="./mosaic_dataset" 
 )
 
 visualize(
