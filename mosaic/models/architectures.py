@@ -283,7 +283,7 @@ class AlexNetCore(nn.Module):
             for layer in original_alexnet.features:
                 # If it's a Conv2d, randomize weights
                 if isinstance(layer, nn.Conv2d):
-                    print(f'Randomizing layer: {layer}')
+                    # print(f'Randomizing layer: {layer}')
                     nn.init.kaiming_normal_(layer.weight, mode='fan_out', nonlinearity='relu')
                     if layer.bias is not None:
                         nn.init.constant_(layer.bias, 0)
