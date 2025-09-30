@@ -57,3 +57,26 @@ model = mosaic.from_pretrained(
     subjects="all"
 )
 ```
+
+Running inference with pre-trained models:
+
+```python
+from mosaic.utils.inference import MosaicInference
+from PIL import Image
+
+inference = MosaicInference(
+    model=model,
+    batch_size=32,
+    device="cuda:0"
+)
+
+results = inference.run(
+    images = [
+        Image.open("cat.jpg"),
+        Image.open("cat.jpg")
+    ]
+)
+
+## (2, num_voxels)
+print(results.shape)
+```
