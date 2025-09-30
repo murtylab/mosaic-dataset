@@ -5,3 +5,5 @@ mosaic_dataset.egg-info/
 .ipynb_checkpoints/
 mosaic_models/
 mosaic_dataset/
+build/
+dist/
