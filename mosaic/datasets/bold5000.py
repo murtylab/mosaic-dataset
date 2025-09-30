@@ -3,9 +3,10 @@ import h5py
 import numpy as np
 from ..utils.download import download_file
 from ..utils.folder import make_folder_if_does_not_exist
-from ..constants import BASE_URL
+from ..constants import BASE_URL, default_betas_folder
 from ..utils.parcellation import parse_betas
 
+sub_folder_name = "BOLD5000"
 subject_id_to_file_mapping = {
     1: "sub-01_BOLD5000.hdf5",
     2: "sub-02_BOLD5000.hdf5",
@@ -30,9 +31,14 @@ class BOLD5000SingleSubject:
 
         if not os.path.exists(self.filename):
             make_folder_if_does_not_exist(folder=self.folder)
+            file = os.path.join(
+                default_betas_folder,
+                sub_folder_name,
+                subject_id_to_file_mapping[self.subject_id],
+            )
             download_file(
                 base_url=BASE_URL,
-                file=subject_id_to_file_mapping[self.subject_id],
+                file=file,
                 save_as=self.filename,
             )
 
