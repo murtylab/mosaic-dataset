@@ -1,4 +1,4 @@
-BASE_URL = "https://mosaicfmri.s3.amazonaws.com/singlesubject_hdf5"
+BASE_URL = "https://mosaicfmri.s3.amazonaws.com"
 
 ## sourced from htp_utils.mmp i.e Glasser et.al. Multi-Modal Parcellation (MMP 1.0) 
 ## see: https://rmldj.github.io/hcp-utils/

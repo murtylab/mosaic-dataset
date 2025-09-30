@@ -9,7 +9,7 @@ def download_file(base_url: str, file: str, save_as: str):
             r.raise_for_status()
             total = int(r.headers.get('content-length', 0))
             with open(save_as, 'wb') as f, tqdm(
-                desc=f"Downloading {file}",
+                desc=f"\033[92m[Mosaic]\033[0m Downloading {file}",
                 total=total,
                 unit='B',
                 unit_scale=True,
