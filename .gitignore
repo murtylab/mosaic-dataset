@@ -7,3 +7,4 @@ mosaic_models/
 mosaic_dataset/
 build/
 dist/
+*.jpg
