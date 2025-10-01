@@ -97,6 +97,10 @@ class SelectROIs:
                 for idx in self.selected_roi_indices
                 if idx not in self.nan_indices_dataset
             ]
+
+        """
+        this is a list of the fsLR32k indices that correspond to the ROIs you want to select
+        """
         self.selected_roi_indices = sorted(
             self.selected_roi_indices
         )  # sort the indices. sometimes indexing (like with the hdf5 file) needs it to be sorted.
