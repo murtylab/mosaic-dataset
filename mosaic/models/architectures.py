@@ -719,8 +719,10 @@ class EncoderMultiHead(nn.Module):
     def forward(
         self,
         x: torch.Tensor,
-        names_and_subjects: dict[str, Union[list, str]]
+        names_and_subjects: dict[str, Union[list, str]] = None
     ):
+
+        assert names_and_subjects is not None, f"\033[33mPlease provide a names_and_subjects argument. It's a dictionary that maps dataset names (str) to subject_ids (list of integers or 'all').\nExample: {{'NSD': [1, 2], 'deeprecon': 'all'}}\033[0m"
         
         for name in names_and_subjects.keys():
             assert name in list(num_subjects.keys()), f"Dataset name {name} is not valid. Please choose from {list(num_subjects.keys())}."
