@@ -6,7 +6,7 @@ from ..utils.folder import make_folder_if_does_not_exist
 from ..constants import BASE_URL, default_betas_folder
 from ..utils.parcellation import parse_betas
 
-sub_folder_name = "BOLDMomentsDataset"
+sub_folder_name = "NaturalObjectDataset"
 subject_id_to_file_mapping = {i: f"sub-{i:02d}_NOD.hdf5" for i in range(1, 31)}
 
 
