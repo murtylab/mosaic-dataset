@@ -20,6 +20,8 @@ from torchvision.models import (
 from torchvision.models.squeezenet import Fire
 from typing import Optional
 import copy
+from typing import Union
+from ..constants import num_subjects
 
 
 """
@@ -652,7 +654,7 @@ class EncoderMultiHead(nn.Module):
         }
         self.training = False
 
-    def forward(
+    def forward_legacy(
         self,
         x,
         subjectID_value=None,
@@ -661,6 +663,9 @@ class EncoderMultiHead(nn.Module):
         fake_relu=False,
         **kwargs,
     ):
+        """
+        implementation of Ben's original forward pass
+        """
         # Get core features
         core_output = self.core(x)
         if subjectID_value is None:
@@ -710,6 +715,45 @@ class EncoderMultiHead(nn.Module):
 
         # Concatenate all outputs along the batch dimension
         return torch.cat(outputs, dim=0)
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        names_and_subjects: dict[str, Union[list, str]]
+    ):
+        
+        for name in names_and_subjects.keys():
+            assert name in list(num_subjects.keys()), f"Dataset name {name} is not valid. Please choose from {list(num_subjects.keys())}."
+
+        subjectID_str_values = []
+        outputs = {}
+
+        core_output = self.core(x)
+
+        for dataset_name in names_and_subjects.keys():
+            outputs[dataset_name] = {}
+
+            if isinstance(names_and_subjects[dataset_name], str):
+                assert names_and_subjects[dataset_name] == "all", f"Invalid value {names_and_subjects[dataset_name]} for dataset {dataset_name}. Must be 'all' or a list of subject IDs."
+                names_and_subjects[dataset_name] = [i for i in range(1, num_subjects[dataset_name]+1)]
+            else:
+                pass
+
+            for subject_id_int in names_and_subjects[dataset_name]:
+                assert subject_id_int in range(1, num_subjects[dataset_name]+1), f"For {dataset_name}, subject_id {subject_id_int} is out of range. Must be between 1 and {num_subjects[dataset_name]}."
+
+                subjectID_str = f"sub-{subject_id_int:02}_{dataset_name}"
+
+                assert subjectID_str in self.subject_readouts, f"Subject ID {subjectID_str} not found in readouts: {list(self.subject_readouts.keys())}" 
+
+                single_subject_output = self.subject_readouts[subjectID_str](
+                    core_output
+                )
+                outputs[dataset_name][f"sub-{subject_id_int:02}"] = single_subject_output
+
+
+        assert len(outputs) ==  len(names_and_subjects), f"Expected outputs from {len(names_and_subjects)} datasets in outputs, but got {len(outputs)}."
+        return outputs
 
     def count_parameters(self):
         """

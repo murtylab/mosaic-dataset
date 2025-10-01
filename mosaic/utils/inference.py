@@ -1,5 +1,6 @@
 import torch
 from PIL import Image
+from collections import defaultdict
 import torchvision.transforms as transforms
 
 imagenet_transforms = transforms.Compose(
@@ -24,7 +25,7 @@ class MosaicInference:
         self.model.eval()
 
     @torch.no_grad()
-    def run(self, images: list[Image.Image]):
+    def run(self, images: list[Image.Image], names_and_subjects: dict = {"NSD": "all"}):
         images = [imagenet_transforms(image) for image in images]
         images = torch.stack(images, dim=0)
 
@@ -33,7 +34,11 @@ class MosaicInference:
         # Handles the last batch even if it's smaller than batch_size
         for i in range(0, len(images), self.batch_size):
             batch = images[i : i + self.batch_size].to(self.device)
-            outputs = self.model(batch)
-            results.append(outputs.cpu())
-        results = torch.cat(results, dim=0)
+            outputs = self.model(batch, names_and_subjects=names_and_subjects)
+
+            for dataset_name in outputs:
+                for subject_id in outputs[dataset_name]:
+                    outputs[dataset_name][subject_id] = outputs[dataset_name][subject_id].detach().cpu()
+            results.append(outputs)
+    
         return results
