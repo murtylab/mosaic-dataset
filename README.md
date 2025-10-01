@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="images/image.png" alt="mosaic-dataset banner" width="50%">
+    <img src="images/banner.png" alt="mosaic-dataset banner" width="50%">
 </p>
 
 <p align="center">
