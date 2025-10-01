@@ -1,6 +1,12 @@
-# mosaic-dataset
+<p align="center">
+    <img src="images/image.png" alt="mosaic-dataset banner" width="50%">
+</p>
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/murtylab/mosaic-dataset/blob/master/examples/mosaic-starter.ipynb) 
+<p align="center">
+    <a href="https://colab.research.google.com/github/murtylab/mosaic-dataset/blob/master/examples/mosaic-starter.ipynb">
+        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+    </a>
+</p>
 
 Load the mosaic dataset (Lahner et al.) and the associated pre-trained models
 
