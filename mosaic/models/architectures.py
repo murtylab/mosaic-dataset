@@ -725,7 +725,6 @@ class EncoderMultiHead(nn.Module):
         for name in names_and_subjects.keys():
             assert name in list(num_subjects.keys()), f"Dataset name {name} is not valid. Please choose from {list(num_subjects.keys())}."
 
-        subjectID_str_values = []
         outputs = {}
 
         core_output = self.core(x)
