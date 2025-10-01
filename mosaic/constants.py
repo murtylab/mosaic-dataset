@@ -1,6 +1,18 @@
 BASE_URL = "https://mosaicfmri.s3.amazonaws.com"
 default_betas_folder = "fMRIPrepv23_2_0/task_fMRI/betas/GLMsinglev1_2"
 
+num_subjects = {
+    "BOLD5000": 4,
+    "deeprecon": 3,
+    "GOD": 5,
+    "NSD": 8,
+    "THINGS": 3,
+    "deeprecon": 3,
+    "BMD": 10,
+    "NOD": 30,
+    "HAD": 30,
+}
+
 ## sourced from htp_utils.mmp i.e Glasser et.al. Multi-Modal Parcellation (MMP 1.0)
 ## see: https://rmldj.github.io/hcp-utils/
 ## to know more about the ROIs, see: https://link.springer.com/article/10.1007/s00429-021-02421-6

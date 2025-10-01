@@ -2,6 +2,7 @@ import os
 from typing import Union, List
 from torch.utils.data import ConcatDataset
 from .models import from_pretrained
+from .constants import num_subjects
 
 from .datasets import (
     BOLD5000SingleSubject,
@@ -16,26 +17,14 @@ from .datasets import (
 )
 
 name_to_dataset_mapping = {
-    "bold5000": BOLD5000SingleSubject,
-    "generic_object_decoding": GenericObjectDecodingSingleSubject,
-    "nsd": NSDSingleSubject,
-    "things_fmri": ThingsFMRISingleSubject,
-    "deep_recon": DeepReconSingleSubject,
-    "bold_moments": BOLDMomentsSingleSubject,
-    "nod": NODSingleSubject,
-    "had": HADSingleSubject,
-}
-
-num_subjects = {
-    "bold5000": 4,
-    "deeprecon": 3,
-    "generic_object_decoding": 5,
-    "nsd": 8,
-    "things_fmri": 3,
-    "deep_recon": 3,
-    "bold_moments": 10,
-    "nod": 30,
-    "had": 30,
+    "BOLD5000": BOLD5000SingleSubject,
+    "GOD": GenericObjectDecodingSingleSubject,
+    "NSD": NSDSingleSubject,
+    "THINGS": ThingsFMRISingleSubject,
+    "deeprecon": DeepReconSingleSubject,
+    "BMD": BOLDMomentsSingleSubject,
+    "NOD": NODSingleSubject,
+    "HAD": HADSingleSubject,
 }
 
 
