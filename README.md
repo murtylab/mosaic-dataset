@@ -13,8 +13,8 @@ import mosaic
 
 dataset = mosaic.load(
     names_and_subjects={
-        "nsd": [2,3],
-        "deep_recon": "all",
+        "NSD": [2,3],
+        "deeprecon": "all",
     },
     folder="./mosaic_dataset" 
 )
@@ -87,7 +87,7 @@ print(results.shape)
 Dev Setup
 
 ```bash
-pip install git+https://github.com/Mayukhdeb/mosaic-dataset.git
+git clone git+https://github.com/Mayukhdeb/mosaic-dataset.git
 cd mosaic-dataset
 python setup.py develop
 ```
