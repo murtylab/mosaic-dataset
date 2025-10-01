@@ -98,8 +98,8 @@ def get_pretrained_backbone(
     )
     num_vertices = len(ROI_selection.selected_roi_indices)
     # print(f"number of vertices/regression targets: {num_vertices}")
-
-    out_shape = bo_core(torch.randn(1, 3, 224, 224)).size()[1:]
+    with torch.no_grad():
+        out_shape = bo_core(torch.randn(1, 3, 224, 224)).size()[1:]
     readout_kwargs = {
         "in_shape": out_shape,
         "bias": True,
