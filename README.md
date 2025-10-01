@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="images/banner.png" alt="mosaic-dataset banner" width="50%">
+    <img src="https://github.com/murtylab/mosaic-dataset/raw/master/images/banner.png" alt="mosaic-dataset banner" width="50%">
 </p>
 
 <p align="center">
