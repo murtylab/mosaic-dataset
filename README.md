@@ -85,9 +85,18 @@ results = inference.run(
         Image.open("cat.jpg")
     ]
 )
+```
 
-## (2, num_voxels)
-print(results.shape)
+Visualizing model predictions
+
+```python
+inference.plot(
+    image=Image.open("cat.jpg"),
+    save_as="predicted_voxel_responses.html",
+    dataset_name="NSD",
+    subject_id=1,
+    mode="inflated",
+)
 ```
 
 Dev Setup
