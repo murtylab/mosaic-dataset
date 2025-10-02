@@ -8,6 +8,7 @@ from ..constants import num_subjects
 
 imagenet_transforms = transforms.Compose(
     [
+        transforms.CenterCrop((lambda img: min(img.size))),
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
         transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
@@ -72,7 +73,8 @@ class MosaicInference:
 
         parcel_map = hcp.mmp.map_all
         all_voxels = torch.zeros_like(torch.tensor(parcel_map), dtype=torch.float32)
-
+        ## TODO: use SelectROIs.sample2wb here instead of manually indexing
+        
         all_voxels[selected_roi_indices] = voxel_activations
         plotting_mode = getattr(hcp.mesh, mode)
 
