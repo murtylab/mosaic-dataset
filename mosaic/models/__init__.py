@@ -14,8 +14,8 @@ def from_pretrained(
         backbone_name in valid_backbone_names
     ), f"Invalid backbone_name {backbone_name}. Must be one of {valid_backbone_names}"
     assert (
-        vertices in valid_vertices
-    ), f"Invalid vertices: {vertices}. Must be one of: {valid_vertices}"
+        vertices in valid_vertices[backbone_name]
+    ), f"Invalid vertices: {vertices}. Must be one of: {valid_vertices[backbone_name]}"
 
     return get_pretrained_backbone(
         backbone_name=backbone_name,

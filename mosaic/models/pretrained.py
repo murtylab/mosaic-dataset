@@ -6,9 +6,23 @@ from .transforms import SelectROIs
 from .readout import SpatialXFeatureLinear
 import torch.nn as nn
 
-valid_backbone_names = ["alexnet", "resnet18", "squeezenet", "swint"]
-valid_vertices = ["visual"]
-valid_frameworks = ["multihead"]
+valid_backbone_names = ["alexnet", "resnet18", "squeezenet", "swint", "cnn8"]
+
+valid_vertices = {
+    "alexnet": ["visual"],
+    "resnet18": ["visual"],
+    "squeezenet": ["visual"],
+    "swint": ["visual"],
+    "cnn8": ["visual"],
+}
+
+valid_frameworks = {
+    "alexnet": ["multihead"],
+    "resnet18": ["multihead"],
+    "squeezenet": ["multihead"],
+    "swint": ["multihead"],
+    "cnn8": ["multihead"],
+}
 
 model_folder = "brain_optimized_checkpoints"
 
@@ -28,6 +42,17 @@ model_filenames = {
     "swint": os.path.join(
         model_folder, "model-SwinT_framework-multihead_subjects-all_vertices-visual.pth"
     ),
+    "cnn8": os.path.join(
+        model_folder, "model-CNN8_framework-multihead_subjects-all_vertices-visual.pth"
+    ),
+}
+
+valid_subjects = {
+    "alexnet": ["all"],
+    "resnet18": ["all"],
+    "squeezenet": ["all"],
+    "swint": ["all"],
+    "cnn8": ['all'],
 }
 
 from .architectures import (
@@ -37,6 +62,7 @@ from .architectures import (
     SwinTCore,
     Encoder,
     EncoderMultiHead,
+    C8NonSteerableCNN
 )
 from typing import Union
 import requests
@@ -61,8 +87,8 @@ def get_pretrained_backbone(
         bo_core = SqueezeNet1_1Core(add_batchnorm=True)
     elif "swint" == backbone_name:
         bo_core = SwinTCore()
-    # elif "CNN8" == backbone_name:
-    #     bo_core = C8NonSteerableCNN()
+    elif "cnn8" == backbone_name:
+        bo_core = C8NonSteerableCNN()
     else:
         raise ValueError(
             f"Invalid backbone_name {backbone_name}. Must be one of {valid_backbone_names}"
