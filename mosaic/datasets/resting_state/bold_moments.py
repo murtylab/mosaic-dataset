@@ -40,8 +40,8 @@ def download_load_bold_moments_resting_state_data(
     )
 
     url = os.path.join(BASE_URL, file_in_s3)
-    # response = requests.head(url)
-    # assert response.status_code == 200, f"URL {url} is not valid or reachable."
+    response = requests.head(url)
+    assert response.status_code == 200, f"URL {url} is not valid or reachable."
     download_file(
         base_url=BASE_URL,
         file=file_in_s3,
