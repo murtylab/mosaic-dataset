@@ -130,6 +130,21 @@ dataset = MergedDataset(
 
 print(len(dataset))
 ```
+
+Downloading resting state data
+
+```python
+from mosaic.datasets.resting_state import download_resting_state_data
+
+download_resting_state_data(
+    dataset="BMD", ## or "NSD" or "THINGS"
+    subject=1,
+    session=1,
+    run=1,
+    folder="./MOSAIC"
+)
+```
+
 Dev Setup
 
 ```bash
