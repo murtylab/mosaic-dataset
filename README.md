@@ -99,6 +99,17 @@ inference.plot(
 )
 ```
 
+Loading up stimulus info:
+
+```python
+stim_info = mosaic.get_stiminfo(
+    dataset_name="deeprecon",
+    folder="./MOSAIC"
+)
+
+print(stim_info.head())
+```
+
 Dev Setup
 
 ```bash
