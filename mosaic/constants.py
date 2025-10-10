@@ -1,5 +1,6 @@
 BASE_URL = "https://mosaicfmri.s3.amazonaws.com"
 default_betas_folder = "fMRIPrepv23_2_0/task_fMRI/betas/GLMsinglev1_2"
+stiminfo_folder= "stimulus_info"
 
 num_subjects = {
     "BOLD5000": 4,

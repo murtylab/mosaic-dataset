@@ -3,7 +3,7 @@ from typing import Union, List
 from torch.utils.data import ConcatDataset
 from .models import from_pretrained
 from .constants import num_subjects
-
+from .stiminfo import get_stiminfo
 from .datasets import (
     BOLD5000SingleSubject,
     GenericObjectDecodingSingleSubject,
