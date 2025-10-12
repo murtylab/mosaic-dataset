@@ -5,6 +5,8 @@ import nilearn.plotting as plotting
 from mosaic.constants import region_of_interest_labels
 from IPython.display import HTML
 
+from mosaic.models.transforms import SelectROIs
+
 valid_modes = [
     "white",
     "midthickness",
@@ -27,14 +29,20 @@ def render_html_in_notebook(filename: str):
 
 def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str) -> None:
     plotting_mode = getattr(hcp.mesh, mode)
-    data[np.isnan(data)] = 0
+    stat = hcp.cortex_data(data)
+    vmin=np.nanmin(stat)
+    vmax=np.nanmax(stat)
     html_thing = plotting.view_surf(
         plotting_mode,
-        surf_map=hcp.cortex_data(data),
-        threshold=0.0,
+        surf_map=stat,
+        threshold=None,
+        vmin=vmin,
+        vmax=vmax,
         bg_map=hcp.mesh.sulc,
+        symmetric_cmap=False
     )
     html_thing.save_as_html(save_as)
+    return html_thing
 
 
 def visualize(
@@ -46,7 +54,8 @@ def visualize(
     ), f"Expected betas to be a dict, got {type(betas)} instead"
 
     data_to_visualize = np.zeros(len(parcel_map))
-
+    roi_selection = SelectROIs(selected_rois=rois)
+    
     if rois is None:
         rois = list(betas.keys())
     else:
@@ -56,15 +65,15 @@ def visualize(
             ), f"Invalid roi: {roi}\n Expected it to be one of: {valid_rois}"
 
     for roi in rois:
-        data_to_visualize[parcel_map == region_of_interest_labels[roi]] = betas[roi]
+        data_to_visualize[roi_selection.roi_to_index[roi]] = betas[roi]
 
     assert (
         mode in valid_modes
     ), f"Expected mode to be one of {valid_modes}, got {mode} instead"
 
-    visualize_voxel_data(data=data_to_visualize, save_as=save_as, mode=mode)
+    html_thing = visualize_voxel_data(data=data_to_visualize, save_as=save_as, mode=mode)
 
     if show:
-        return render_html_in_notebook(filename=save_as)
+        return html_thing
     else:
         return None
