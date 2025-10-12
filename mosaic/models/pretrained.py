@@ -6,53 +6,42 @@ from .transforms import SelectROIs
 from .readout import SpatialXFeatureLinear
 import torch.nn as nn
 
-valid_backbone_names = ["alexnet", "resnet18", "squeezenet", "swint", "cnn8"]
+valid_backbone_names = ["AlexNet", "ResNet18", "SqueezeNet1_1", "SwinT", "CNN8"]
 
 valid_vertices = {
-    "alexnet": ["visual"],
-    "resnet18": ["visual"],
-    "squeezenet": ["visual"],
-    "swint": ["visual"],
-    "cnn8": ["visual"],
+    "AlexNet": ["visual"],
+    "ResNet18": ["visual"],
+    "SqueezeNet1_1": ["visual"],
+    "SwinT": ["visual"],
+    "CNN8": ["visual", "all"],
 }
 
 valid_frameworks = {
-    "alexnet": ["multihead"],
-    "resnet18": ["multihead"],
-    "squeezenet": ["multihead"],
-    "swint": ["multihead"],
-    "cnn8": ["multihead"],
+    "AlexNet": ["multihead"],
+    "ResNet18": ["multihead"],
+    "SqueezeNet1_1": ["multihead"],
+    "SwinT": ["multihead"],
+    "CNN8": ["multihead"],
 }
 
-model_folder = "brain_optimized_checkpoints"
+model_folder_s3 = "brain_optimized_checkpoints"
 
-model_filenames = {
-    "alexnet": os.path.join(
-        model_folder,
-        "model-AlexNet_framework-multihead_subjects-all_vertices-visual.pth",
-    ),
-    "resnet18": os.path.join(
-        model_folder,
-        "model-ResNet18_framework-multihead_subjects-all_vertices-visual.pth",
-    ),
-    "squeezenet": os.path.join(
-        model_folder,
-        "model-SqueezeNet1_1_framework-multihead_subjects-all_vertices-visual.pth",
-    ),
-    "swint": os.path.join(
-        model_folder, "model-SwinT_framework-multihead_subjects-all_vertices-visual.pth"
-    ),
-    "cnn8": os.path.join(
-        model_folder, "model-CNN8_framework-multihead_subjects-all_vertices-visual.pth"
-    ),
+supported_checkpoints = {
+    "AlexNet": ["model-AlexNet_framework-multihead_subjects-all_vertices-visual.pth"],
+    "ResNet18": ["model-ResNet18_framework-multihead_subjects-all_vertices-visual.pth"],
+    "SqueezeNet1_1": ["model-SqueezeNet1_1_framework-multihead_subjects-all_vertices-visual.pth"],
+    "SwinT": ["model-SwinT_framework-multihead_subjects-all_vertices-visual.pth"],
+    "CNN8": ["model-CNN8_framework-multihead_subjects-all_vertices-visual.pth",
+             "model-CNN8_framework-multihead_subjects-NSD_vertices-all.pth"]
 }
+supported_checkpoints_list = [item for sublist in supported_checkpoints.values() for item in sublist]
 
 valid_subjects = {
-    "alexnet": ["all"],
-    "resnet18": ["all"],
-    "squeezenet": ["all"],
-    "swint": ["all"],
-    "cnn8": ['all'],
+    "AlexNet": ["all"],
+    "ResNet18": ["all"],
+    "SqueezeNet1_1": ["all"],
+    "SwinT": ["all"],
+    "CNN8": ['all', "NSD"],
 }
 
 from .architectures import (
@@ -70,24 +59,24 @@ import requests
 
 def get_pretrained_backbone(
     backbone_name: str,
-    vertices: str,
     framework: str,
     subjects: Union[str, list],
+    vertices: str,
     folder: str = "./mosaic_models/",
     device="cpu",
 ):
     if not os.path.exists(path=folder):
         os.mkdir(folder)
 
-    if "alexnet" == backbone_name:
+    if "AlexNet" == backbone_name:
         bo_core = AlexNetCore(add_batchnorm=True)  # brain optimized pretrained
-    elif "resnet18" == backbone_name:
+    elif "ResNet18" == backbone_name:
         bo_core = ResNet18Core()
-    elif "squeezenet" == backbone_name:
+    elif "SqueezeNet1_1" == backbone_name:
         bo_core = SqueezeNet1_1Core(add_batchnorm=True)
-    elif "swint" == backbone_name:
+    elif "SwinT" == backbone_name:
         bo_core = SwinTCore()
-    elif "cnn8" == backbone_name:
+    elif "CNN8" == backbone_name:
         bo_core = C8NonSteerableCNN()
     else:
         raise ValueError(
@@ -100,24 +89,23 @@ def get_pretrained_backbone(
     elif vertices == "all":
         rois = [f"GlasserGroup_{x}" for x in range(1, 23)]
 
-    # print(
-    #     f"Loading pretrained backbone: {backbone_name} vertices: {vertices} framework: {framework} subjects: {subjects}"
-    # )
+    desired_checkpoint = f"model-{backbone_name}_framework-{framework}_subjects-{subjects}_vertices-{vertices}.pth"
 
-    checkpoint_filename = os.path.join(
-        folder,
-        f"model-{backbone_name}_framework-{framework}_subjects-{subjects}_vertices-{vertices}.pth",
-    )
+    assert desired_checkpoint in supported_checkpoints_list, f"Your specified checkpoint {desired_checkpoint} is not yet supported or does not exist. Must be one of {supported_checkpoints_list}."
 
-    if not os.path.exists(checkpoint_filename):
-        url = BASE_URL + "/" + model_filenames[backbone_name]
+    desired_checkpoint_local_path = os.path.join(folder, desired_checkpoint)
+    #if you haven't downloaded the checkpoint yet, download it. otherwise load it from your local folder
+    if not os.path.exists(desired_checkpoint_local_path):
+        url = BASE_URL + "/" + model_folder_s3 + "/" + desired_checkpoint
         response = requests.head(url)
         assert response.status_code == 200, f"URL {url} is not valid or reachable."
         download_file(
             base_url=BASE_URL,
-            file=model_filenames[backbone_name],
-            save_as=checkpoint_filename,
+            file=model_folder_s3 + "/" + desired_checkpoint,
+            save_as=desired_checkpoint_local_path,
         )
+    else:
+        print(f"Checkpoint {desired_checkpoint_local_path} already downloaded.")
 
     ROI_selection = SelectROIs(
         selected_rois=rois,
@@ -192,7 +180,7 @@ def get_pretrained_backbone(
         bo_model = nn.DataParallel(
             bo_model
         )  # must use dataparallel because this is how the model was trained and weights saved
-        state_dict = torch.load(checkpoint_filename, map_location="cpu")
+        state_dict = torch.load(desired_checkpoint_local_path, map_location="cpu")
         bo_model.load_state_dict(state_dict, strict=True)
         bo_model = bo_model.eval()
         return (
