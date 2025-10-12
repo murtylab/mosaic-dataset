@@ -44,7 +44,9 @@ class GenericObjectDecodingSingleSubject:
                 file=file,
                 save_as=self.filename,
             )
-
+        else:
+            print(f"Dataset {self.filename} already downloaded.")
+            
         assert os.path.exists(
             self.filename
         ), f"File {self.filename} does not exist. Please check the download."

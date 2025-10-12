@@ -43,6 +43,8 @@ class BOLD5000SingleSubject:
                 file=file,
                 save_as=self.filename,
             )
+        else:
+            print(f"Dataset {self.filename} already downloaded.")
 
         assert os.path.exists(
             self.filename
