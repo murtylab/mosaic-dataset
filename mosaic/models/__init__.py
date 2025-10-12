@@ -4,12 +4,28 @@ import torch.nn as nn
 
 
 def from_pretrained(
-    backbone_name: str = "resnet18",
-    vertices: Union[str, list] = "visual",
+    backbone_name: str = "ResNet18",
     framework: str = "multihead",
     subjects: Union[str, list] = "all",
+    vertices: str = "visual",
     folder: str = "./mosaic_models/",
 ) -> nn.Module:
+    """
+    Download and load a pretrained brain optimized model by specifying backbone, framework, subjects, and vertices
+
+    INPUTS:
+    backbone_name: str, name of backbone (core) model, or core model. 
+    framework: str, name of model framework readouts e.g., multihead or singlehead
+    subjects: str or list[str], the subjects that the model was trained on.
+    vertices: str, the vertices that model was trained on. visual --> MMP1.0 ROI sections 1-5, all --> MMP1.0 ROI sections 1-22
+    folder: local folder to download the checkpoint to
+
+    RETURNS:
+    pretrained backbone, type torch module in nn.DataParallel. specified architecture with pretrained weights loaded in.
+    model_config: dict, dictionary of the corresponding model specifications. useful for other functions that need to know something about 
+    the model that that's not easily accessible, like plotting functions needing to know the vertices it was trained on.
+    
+    """
     assert (
         backbone_name in valid_backbone_names
     ), f"Invalid backbone_name {backbone_name}. Must be one of {valid_backbone_names}"
@@ -17,10 +33,15 @@ def from_pretrained(
         vertices in valid_vertices[backbone_name]
     ), f"Invalid vertices: {vertices}. Must be one of: {valid_vertices[backbone_name]}"
 
+    model_config = {"backbone_name": backbone_name,
+                    "framework": framework,
+                    "subjects": subjects,
+                    "vertices": vertices}
+
     return get_pretrained_backbone(
         backbone_name=backbone_name,
-        vertices=vertices,
         framework=framework,
         subjects=subjects,
+        vertices=vertices,
         folder=folder,
-    )
+    ), model_config
