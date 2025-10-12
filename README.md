@@ -59,11 +59,11 @@ Loading pre-trained models
 ```python
 import mosaic
 
-model = mosaic.from_pretrained(
-    backbone_name="resnet18",
-    vertices="visual",
+model, model_config = mosaic.from_pretrained(
+    backbone_name="ResNet18",
     framework="multihead",
-    subjects="all"
+    subjects="all",
+    vertices="visual"
 )
 ```
 
@@ -76,13 +76,14 @@ from PIL import Image
 inference = MosaicInference(
     model=model,
     batch_size=32,
+    model_config=model_config,
     device="cuda:0"
 )
 
 results = inference.run(
     images = [
-        Image.open("cat.jpg"),
-        Image.open("cat.jpg")
+        Image.open("cat.jpg").convert("RGB"),
+        Image.open("cat.jpg").convert("RGB")
     ]
 )
 ```
@@ -91,7 +92,7 @@ Visualizing model predictions
 
 ```python
 inference.plot(
-    image=Image.open("cat.jpg"),
+    image=Image.open("cat.jpg").convert("RGB"),
     save_as="predicted_voxel_responses.html",
     dataset_name="NSD",
     subject_id=1,

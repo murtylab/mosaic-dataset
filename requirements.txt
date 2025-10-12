@@ -2,3 +2,7 @@ hcp_utils
 numpy
 h5py
 nilearn
+torch
+matplotlib
+tqdm
+torchvision

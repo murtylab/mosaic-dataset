@@ -8,3 +8,6 @@ mosaic_dataset/
 build/
 dist/
 *.jpg
+*.npy
+*.pth
+*.hdf5
