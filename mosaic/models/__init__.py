@@ -33,15 +33,15 @@ def from_pretrained(
         vertices in valid_vertices[backbone_name]
     ), f"Invalid vertices: {vertices}. Must be one of: {valid_vertices[backbone_name]}"
 
-    model_config = {"backbone_name": backbone_name,
-                    "framework": framework,
-                    "subjects": subjects,
-                    "vertices": vertices}
 
-    return get_pretrained_backbone(
+    model = get_pretrained_backbone(
         backbone_name=backbone_name,
         framework=framework,
         subjects=subjects,
         vertices=vertices,
         folder=folder,
-    ), model_config
+    )
+
+    model.vertices = vertices
+
+    return model.eval()

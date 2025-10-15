@@ -24,14 +24,13 @@ class MosaicInference:
         self,
         model,
         batch_size: int = 32,
-        model_config=None,
         device: str = "cuda" if torch.cuda.is_available() else "cpu",
     ):
         self.model = model.to(device).eval()
         self.batch_size = batch_size
         self.device = device
         self.model.eval()
-        self.model_config = model_config
+        assert hasattr(model, "vertices"), "Model must have a 'vertices' attribute indicating the vertices it was trained on. If using from_pretrained, this is automatically added."
 
     @torch.no_grad()
     def run(self, images: list[Image.Image], names_and_subjects: dict = {"NSD": "all"}) -> dict:
@@ -87,32 +86,20 @@ class MosaicInference:
         )
         voxel_activations = result[dataset_name][f"sub-{subject_id:02}"]
 
-        if self.model_config is not None:
-            if self.model_config['vertices'] == 'visual':
-                rois = [f"GlasserGroup_{x}" for x in range(1, 6)]
-            elif self.model_config['vertices'] == 'all':
-                rois = [f"GlasserGroup_{x}" for x in range(1, 23)]
+        if self.model.vertices == 'visual':
+            rois = [f"GlasserGroup_{x}" for x in range(1, 6)]
+        elif self.model.vertices == 'all':
+            rois = [f"GlasserGroup_{x}" for x in range(1, 23)]
         else:
-            #try to infer ROIs from the number of vertices in the prediction
-            for _, subjectIDs in result.items():
-                for _, prediction in subjectIDs.items():
-                    nvertices = prediction.shape[-1]
-            if nvertices == 7831:
-                rois = [f"GlasserGroup_{x}" for x in range(1, 6)]
-                print("Inferring the model was trained on MMP1.0 regions 1-5 from number of vertices. Make sure this is correct or else specify a model_config.")
-            elif nvertices == 57051:
-                rois = [f"GlasserGroup_{x}" for x in range(1, 23)]
-                print("Inferring the model was trained on MMP1.0 regions 1-22 from number of vertices. Make sure this is correct or else specify a model_config.")
-            else:
-                raise ValueError(f"Cannot infer ROIs model was trained on. Please specify a model_config")
-
+            raise ValueError(f"Model vertices attribute must be 'visual' or 'all', but got: {self.model.vertices}")
+        
         all_voxels = SelectROIs(selected_rois=rois).sample2wb(voxel_activations.numpy().squeeze())
 
         stat = hcp.cortex_data(all_voxels)
         vmin = np.nanmin(stat)
         vmax = np.nanmax(stat)
 
-        plotting_mode = getattr(hcp.mesh, 'inflated')
+        plotting_mode = getattr(hcp.mesh, mode)
         html_thing = plotting.view_surf(
             plotting_mode,
             surf_map=stat,
