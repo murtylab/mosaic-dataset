@@ -59,7 +59,7 @@ Loading pre-trained models
 ```python
 import mosaic
 
-model, model_config = mosaic.from_pretrained(
+model = mosaic.from_pretrained(
     backbone_name="ResNet18",
     framework="multihead",
     subjects="all",
@@ -76,7 +76,6 @@ from PIL import Image
 inference = MosaicInference(
     model=model,
     batch_size=32,
-    model_config=model_config,
     device="cuda:0"
 )
 
