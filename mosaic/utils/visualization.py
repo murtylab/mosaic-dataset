@@ -48,15 +48,16 @@ def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str) -> None:
 def visualize(
     betas: dict, save_as: str, mode="inflated", rois: list[str] = None, show=True
 ) -> None:
+    
+    data_to_visualize = np.zeros(len(parcel_map))
+    roi_selection = SelectROIs(
+        selected_rois="all" if rois is None else rois
+    )
 
     assert isinstance(
         betas, dict
     ), f"Expected betas to be a dict, got {type(betas)} instead"
-
-    data_to_visualize = np.zeros(len(parcel_map))
-    roi_selection = SelectROIs(selected_rois=rois)
-    
-    if rois is None:
+    if rois == None:
         rois = list(betas.keys())
     else:
         for roi in rois:
@@ -65,7 +66,12 @@ def visualize(
             ), f"Invalid roi: {roi}\n Expected it to be one of: {valid_rois}"
 
     for roi in rois:
-        data_to_visualize[roi_selection.roi_to_index[roi]] = betas[roi]
+        if len(roi) == 0:
+            continue
+        try:
+            data_to_visualize[roi_selection.roi_to_index[roi]] = betas[roi]
+        except KeyError:
+            print(f"Warning: ROI {roi} not found in betas dictionary. Skipping.")
 
     assert (
         mode in valid_modes
