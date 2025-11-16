@@ -2,6 +2,7 @@ BASE_URL = "https://mosaicfmri.s3.amazonaws.com"
 default_betas_folder = "fMRIPrepv23_2_0/task_fMRI/betas/GLMsinglev1_2"
 stiminfo_folder= "stimulus_info"
 resting_state_folder= "fMRIPrepv23_2_0/rest_fMRI/timeseries/temporal_filtering"
+task_folder = "fMRIPrepv23_2_0/task_fMRI/timeseries/temporal_filtering"
 
 num_subjects = {
     "BOLD5000": 4,
