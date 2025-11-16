@@ -145,6 +145,17 @@ download_resting_state_data(
 )
 ```
 
+Downloading time series data
+
+```python
+from mosaic.datasets.timeseries import download_timeseries_data
+
+download_timeseries_data(
+    folder = "./data",
+    dataset_name = "deeprecon"
+)
+```
+
 Dev Setup
 
 ```bash
