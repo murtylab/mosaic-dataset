@@ -3,7 +3,7 @@ default_betas_folder = "fMRIPrepv23_2_0/task_fMRI/betas/GLMsinglev1_2"
 stiminfo_folder= "stimulus_info"
 resting_state_folder= "fMRIPrepv23_2_0/rest_fMRI/timeseries/temporal_filtering"
 task_folder = "fMRIPrepv23_2_0/task_fMRI/timeseries/temporal_filtering"
-
+prefix = "\033[92m[MOSAIC]\033[0m"
 
 subject_id_to_file_mapping = {
     "BOLDMomentsDataset": {

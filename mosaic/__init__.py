@@ -1,11 +1,13 @@
 import os
-from typing import Union, List
+from typing import Union, List, Dict
 from torch.utils.data import ConcatDataset
 from .models import from_pretrained
-from .constants import num_subjects, subject_id_to_file_mapping
+from .constants import num_subjects, subject_id_to_file_mapping, BASE_URL, prefix, default_betas_folder
 from .stiminfo import get_stiminfo
 from .datasets import SingleSubjectDataset
-
+from .utils.download import download_file, check_if_need_to_download
+from .utils.folder import make_folder_if_does_not_exist
+from .datasets.single_subject import validate_dataset_name, validate_subject_id
 
 def load_single_dataset(
     name: str,
@@ -50,4 +52,53 @@ def load(
         combined_dataset = ConcatDataset(all_datasets)
         return combined_dataset
     
-    
+
+
+def download(
+    names_and_subjects: Dict[str, Union[List[int], str]],
+    folder: str = "./mosaic_dataset",
+) -> List[str]:
+    filenames = []
+
+    # Validate all dataset names first
+    for dataset_name in names_and_subjects.keys():
+        validate_dataset_name(dataset_name)
+
+    print(f"Downloading datasets to: {os.path.abspath(folder)}\n")
+    make_folder_if_does_not_exist(folder=folder)
+
+    for dataset_name, subject_ids_input in names_and_subjects.items():
+        # Resolve subject IDs
+        if subject_ids_input == "all":
+            subject_ids = list(subject_id_to_file_mapping[dataset_name].keys())
+        else:
+            assert isinstance(subject_ids_input, list), (
+                f"For dataset '{dataset_name}', subject_ids must be a list of ints or 'all', "
+                f"got {type(subject_ids_input)}"
+            )
+            subject_ids = subject_ids_input
+
+        # Validate each subject ID
+        for subject_id in subject_ids:
+            validate_subject_id(dataset_name=dataset_name, subject_id=subject_id)
+
+
+        for subject_id in subject_ids:
+            filename = subject_id_to_file_mapping[dataset_name][subject_id]
+            save_path = os.path.join(folder, filename)
+            filenames.append(save_path)
+
+            if check_if_need_to_download(filename=save_path):
+                remote_path = os.path.join(default_betas_folder, dataset_name, filename)
+                print(f" Downloading {dataset_name} - Subject {subject_id}")
+                download_file(
+                    base_url=BASE_URL,
+                    file=remote_path,
+                    save_as=save_path,
+                )
+                print(f"{prefix} Saved to {save_path}")
+            else:
+                print(f"{prefix} File exists: {save_path}")
+
+    print("All downloads completed.")
+    return filenames

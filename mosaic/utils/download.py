@@ -2,6 +2,7 @@ import os
 import requests
 from tqdm import tqdm
 import h5py
+from ..constants import prefix
 
 def check_if_need_to_download(filename: str):
     file_exists = os.path.exists(filename)
@@ -23,7 +24,7 @@ def download_file(base_url: str, file: str, save_as: str):
             r.raise_for_status()
             total = int(r.headers.get("content-length", 0))
             with open(save_as, "wb") as f, tqdm(
-                desc=f"\033[92m[MOSAIC]\033[0m Downloading {file}",
+                desc=f"{prefix} Downloading {file}",
                 total=total,
                 unit="B",
                 unit_scale=True,
