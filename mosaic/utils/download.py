@@ -1,7 +1,20 @@
 import os
 import requests
 from tqdm import tqdm
+import h5py
 
+def check_if_need_to_download(filename: str):
+    file_exists = os.path.exists(filename)
+    need_to_download = False
+    if file_exists:
+        try:
+            data = h5py.File(filename, "r")
+        except OSError:
+            need_to_download = True
+    else:
+        need_to_download = True
+
+    return need_to_download
 
 def download_file(base_url: str, file: str, save_as: str):
     url = f"{base_url}/{file}"

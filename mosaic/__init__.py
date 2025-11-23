@@ -2,124 +2,52 @@ import os
 from typing import Union, List
 from torch.utils.data import ConcatDataset
 from .models import from_pretrained
-from .constants import num_subjects
+from .constants import num_subjects, subject_id_to_file_mapping
 from .stiminfo import get_stiminfo
-from .datasets import (
-    BOLD5000SingleSubject,
-    GenericObjectDecodingSingleSubject,
-    NSDSingleSubject,
-    ThingsFMRISingleSubject,
-    DeepReconSingleSubject,
-    MultiSubjectDataset,
-    BOLDMomentsSingleSubject,
-    NODSingleSubject,
-    HADSingleSubject,
-)
-
-name_to_dataset_mapping = {
-    "BOLD5000": BOLD5000SingleSubject,
-    "GOD": GenericObjectDecodingSingleSubject,
-    "NSD": NSDSingleSubject,
-    "THINGS": ThingsFMRISingleSubject,
-    "deeprecon": DeepReconSingleSubject,
-    "BMD": BOLDMomentsSingleSubject,
-    "NOD": NODSingleSubject,
-    "HAD": HADSingleSubject,
-}
+from .datasets import SingleSubjectDataset
 
 
 def load_single_dataset(
     name: str,
-    subject_id: Union[List[int], str] = 1,
+    subject_id: int = 1,
     folder: str = "./mosaic_dataset",
+    parse_betas: bool = True,
 ):
-    ## assert name is valid
-    assert (
-        name in name_to_dataset_mapping.keys()
-    ), f"Dataset name {name} is not valid. Please choose from {list(name_to_dataset_mapping.keys())}."
-
-    if name != "all":
-        if isinstance(subject_id, str):
-            assert subject_id == "all", "If subject_id is a string, it must be 'all'."
-            return MultiSubjectDataset(
-                datasets=[
-                    name_to_dataset_mapping[name](
-                        folder=os.path.join(folder, name),
-                        subject_id=subject_id,
-                    )
-                    for subject_id in range(1, num_subjects[name] + 1)
-                ]
-            )
-
-        else:
-            dataset_class = name_to_dataset_mapping[name]
-            folder = os.path.join(folder, name)
-            return dataset_class(
-                folder=folder,
-                subject_id=subject_id,
-            )
-    else:
-        assert subject_id == "all", "If name is 'all', subject_id must be 'all'."
-        return MultiSubjectDataset(
-            datasets=[
-                name_to_dataset_mapping[name](
-                    folder=os.path.join(folder, name), subject_id=subject_id
-                )
-                for name in name_to_dataset_mapping.keys()
-                for subject_id in range(1, num_subjects[name] + 1)
-            ]
-        )
+    dataset = SingleSubjectDataset(
+        folder=folder,
+        dataset_name=name,
+        subject_id=subject_id,
+        parse_betas=parse_betas,
+    )
+    return dataset
 
 
 def load(
     names_and_subjects: dict[str, Union[List[int], str]],
     folder: str = "./mosaic_dataset",
+    parse_betas: bool = True,
 ):
-    assert isinstance(
-        names_and_subjects, dict
-    ), f"names_and_subjects must be a dict mapping dataset names (str) to subject_ids (list of integers or 'all'), but got: {type(names_and_subjects)}"
-
-    for dataset_name in names_and_subjects.keys():
-        assert (
-            dataset_name in name_to_dataset_mapping.keys()
-        ), f"Dataset name {dataset_name} is not valid. Please choose from {list(name_to_dataset_mapping.keys())}."
-        subject_ids = names_and_subjects[dataset_name]
-        assert isinstance(
-            subject_ids, (list, str)
-        ), f"For {dataset_name}, subject_ids must be a list of integers or 'all', but got: {type(subject_ids)}"
-        if isinstance(subject_ids, list):
-            for subject_id in subject_ids:
-                assert isinstance(
-                    subject_id, int
-                ), f"For {dataset_name}, each subject_id must be an integer, but got: {type(subject_id)}"
-                assert (
-                    1 <= subject_id <= num_subjects[dataset_name]
-                ), f"For {dataset_name}, subject_id {subject_id} is out of range for dataset {dataset_name}. Must be between 1 and {num_subjects[dataset_name]}."
-        else:
-            assert (
-                subject_ids == "all"
-            ), f"If subject_ids is a string, it must be 'all', but got: {subject_ids}"
-
-    names = list(names_and_subjects.keys())
-    subject_ids = list(names_and_subjects.values())
-
     all_datasets = []
-    for name, subject_id in zip(names, subject_ids):
-        if subject_id != "all":
-            for id in subject_id:
-                dataset = load_single_dataset(name=name, subject_id=id, folder=folder)
-                all_datasets.append(dataset)
-        else:
-            assert (
-                subject_id == "all"
-            ), f"If subject_id is a string, it must be 'all', but got: {subject_id}"
-            dataset = load_single_dataset(
-                name=name, subject_id=subject_id, folder=folder
-            )
 
-        all_datasets.append(dataset)
+    for dataset_name, subject_ids in names_and_subjects.items():
+        if subject_ids == "all":
+            subject_ids = list(range(1, len(subject_id_to_file_mapping[dataset_name]) + 1))
+        else:
+            assert isinstance(subject_ids, list), f"subject_ids must be a list or 'all', got {type(subject_ids)}"
+
+        for subject_id in subject_ids:
+            dataset = load_single_dataset(
+                name=dataset_name,
+                subject_id=subject_id,
+                folder=folder,
+                parse_betas=parse_betas,
+            )
+            all_datasets.append(dataset)
 
     if len(all_datasets) == 1:
         return all_datasets[0]
     else:
-        return ConcatDataset(all_datasets)
+        combined_dataset = ConcatDataset(all_datasets)
+        return combined_dataset
+    
+    

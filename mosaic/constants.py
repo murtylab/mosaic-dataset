@@ -4,16 +4,61 @@ stiminfo_folder= "stimulus_info"
 resting_state_folder= "fMRIPrepv23_2_0/rest_fMRI/timeseries/temporal_filtering"
 task_folder = "fMRIPrepv23_2_0/task_fMRI/timeseries/temporal_filtering"
 
+
+subject_id_to_file_mapping = {
+    "BOLDMomentsDataset": {
+        1: "sub-01_BMD.hdf5",
+        2: "sub-02_BMD.hdf5",
+        3: "sub-03_BMD.hdf5",
+        4: "sub-04_BMD.hdf5",
+        5: "sub-05_BMD.hdf5",
+        6: "sub-06_BMD.hdf5",
+        7: "sub-07_BMD.hdf5",
+        8: "sub-08_BMD.hdf5",
+        9: "sub-09_BMD.hdf5",
+        10: "sub-10_BMD.hdf5",
+    },
+    "BOLD5000": {
+        1: "sub-01_BOLD5000.hdf5",
+        2: "sub-02_BOLD5000.hdf5",
+        3: "sub-03_BOLD5000.hdf5",
+        4: "sub-04_BOLD5000.hdf5",
+    },
+    "deeprecon": {
+        1: "sub-01_deeprecon.hdf5",
+        2: "sub-02_deeprecon.hdf5",
+        3: "sub-03_deeprecon.hdf5",
+    },
+    "GenericObjectDecoding": {
+        1: "sub-01_GOD.hdf5",
+        2: "sub-02_GOD.hdf5",
+        3: "sub-03_GOD.hdf5",
+        4: "sub-04_GOD.hdf5",
+        5: "sub-05_GOD.hdf5",
+    },
+    "HumanActionsDataset": {i: f"sub-{i:02d}_HAD.hdf5" for i in range(1, 31)},
+    "NaturalObjectDataset": {i: f"sub-{i:02d}_NOD.hdf5" for i in range(1, 31)},
+    "NaturalScenesDataset":  {
+        1: "sub-01_NSD.hdf5",
+        2: "sub-02_NSD.hdf5",
+        3: "sub-03_NSD.hdf5",
+        4: "sub-04_NSD.hdf5",
+        5: "sub-05_NSD.hdf5",
+        6: "sub-06_NSD.hdf5",
+        7: "sub-07_NSD.hdf5",
+        8: "sub-08_NSD.hdf5",
+    },
+    "THINGS": {
+        1: "sub-01_THINGS.hdf5",
+        2: "sub-02_THINGS.hdf5",
+        3: "sub-03_THINGS.hdf5",
+    }
+}
+
+
 num_subjects = {
-    "BOLD5000": 4,
-    "deeprecon": 3,
-    "GOD": 5,
-    "NSD": 8,
-    "THINGS": 3,
-    "deeprecon": 3,
-    "BMD": 10,
-    "NOD": 30,
-    "HAD": 30,
+    name: len(subject_id_to_file_mapping[name])
+    for name in subject_id_to_file_mapping.keys()
 }
 
 ## sourced from htp_utils.mmp i.e Glasser et.al. Multi-Modal Parcellation (MMP 1.0)
