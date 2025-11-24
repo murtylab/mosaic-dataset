@@ -19,13 +19,15 @@ import mosaic
 
 dataset = mosaic.load(
     names_and_subjects={
-        "NSD": [2,3],
-        "deeprecon": "all",
+        "NaturalScenesDataset": [1], ## set this to "all" if you want to download data for all subjects
+        # "THINGS": "all"
     },
-    folder="./MOSAIC" 
+    folder="/scratch1/datasets/mosaic_temp_mayukh/",
+    # if set to False, dataset[i]["betas"] will return a tensor containing the betas for all ROIs concatenated together
+    parse_betas=True
 )
 
-print(dataset[0])
+print(dataset[0].keys())
 ```
 
 Visualization
@@ -33,14 +35,6 @@ Visualization
 ```python
 import mosaic
 from mosaic.utils import visualize
-from IPython.display import IFrame
-
-dataset = mosaic.load(
-    names_and_subjects={
-        "bold_moments": [1],
-    },
-    folder="./MOSAIC" 
-)
 
 visualize(
     betas=dataset[0]["betas"],
@@ -48,9 +42,14 @@ visualize(
     rois=[
         "L_FFC",
         "R_FFC",
+        "L_PHA2",
+        "R_PHA2",
+        "L_V1",
+        "R_V1",
+
     ],
     ## other modes are: 'white', 'midthickness', 'pial', 'inflated', 'very_inflated', 'flat', 'sphere'
-    mode = "midthickness",
+    mode = "inflated",
     save_as = "plot.html",
 )
 ```
@@ -60,10 +59,19 @@ Loading pre-trained models
 import mosaic
 
 model = mosaic.from_pretrained(
-    backbone_name="ResNet18",
-    framework="multihead",
-    subjects="all",
-    vertices="visual"
+    backbone_name='ResNet18', 
+    framework='multihead', 
+    subjects='all', 
+    vertices='visual', 
+    folder='./mosaic_models/'
+)
+
+## or load a single subject model
+single_subject_model = mosaic.from_pretrained(
+    backbone_name="CNN8",
+    framework="singlehead",
+    subjects="sub-05_NSD",
+    vertices="visual",
 )
 ```
 
@@ -71,31 +79,32 @@ Running inference with pre-trained models:
 
 ```python
 from mosaic.utils.inference import MosaicInference
-from PIL import Image
 
 inference = MosaicInference(
     model=model,
     batch_size=32,
-    device="cuda:0"
+    device="cpu"
 )
 
 results = inference.run(
     images = [
-        Image.open("cat.jpg").convert("RGB"),
-        Image.open("cat.jpg").convert("RGB")
-    ]
+        Image.open("face.jpg").convert("RGB"),
+    ],
+    names_and_subjects={"NaturalScenesDataset": "all"}
 )
 ```
 
 Visualizing model predictions
 
 ```python
+#note responses to the face are highest in the ventral stream
 inference.plot(
-    image=Image.open("cat.jpg").convert("RGB"),
+    image=Image.open("face.jpg").convert("RGB"),
     save_as="predicted_voxel_responses.html",
-    dataset_name="NSD",
+    dataset_name="NaturalScenesDataset",
     subject_id=1,
-    mode="inflated",
+    ## other modes are: 'white', 'midthickness', 'pial', 'inflated', 'very_inflated', 'flat', 'sphere'
+    mode="inflated"
 )
 ```
 
