@@ -5,8 +5,11 @@ from tqdm import tqdm
 import torchvision.transforms as transforms
 import hcp_utils as hcp
 import nilearn.plotting as plotting
-from mosaic.models.transforms import SelectROIs
-from mosaic.constants import num_subjects
+from ..models.transforms import SelectROIs
+from ..constants import num_subjects
+from ..models.architectures import C8NonSteerableCNN
+import warnings
+from typing import Union
 
 imagenet_transforms = transforms.Compose(
     [
@@ -18,6 +21,17 @@ imagenet_transforms = transforms.Compose(
 )
 
 valid_plot_modes = ['white', 'midthickness', 'pial', 'inflated', 'very_inflated', 'flat', 'sphere']
+
+def check_if_single_subject_model(
+    model
+):
+    assert hasattr(model, "core"), f"Model must have a 'core' attribute, but got this model instead:\n {model}"
+    if isinstance(model.core, C8NonSteerableCNN):
+        return True
+    if hasattr(model, "framework"):
+        if model.framework == "singlehead":
+            return True
+    return False
 
 class MosaicInference:
     def __init__(
@@ -31,14 +45,14 @@ class MosaicInference:
         self.device = device
         self.model.eval()
         assert hasattr(model, "vertices"), "Model must have a 'vertices' attribute indicating the vertices it was trained on. If using from_pretrained, this is automatically added."
+        self.is_single_subject_model = check_if_single_subject_model(model)
 
-    @torch.no_grad()
-    def run(self, images: list[Image.Image], names_and_subjects: dict = {"NSD": "all"}) -> dict:
-        images = [imagenet_transforms(image) for image in images]
-        images = torch.stack(images, dim=0)
-
+    def run_multi_subject_inference(
+        self,
+        images: torch.Tensor,
+        names_and_subjects: dict,
+    ) -> dict:
         results = []
-
         # Handles the last batch even if it's smaller than batch_size
         for i in tqdm(range(0, len(images), self.batch_size), total=len(images)//self.batch_size + 1, desc=f"Running batch inference on {self.device}"):
             batch = images[i : i + self.batch_size].to(self.device)
@@ -68,6 +82,51 @@ class MosaicInference:
                 )
 
         return final_results
+    
+
+    def run_single_subject_inference(
+        self,
+        images: torch.Tensor,
+    ) -> dict:
+        results = []
+        # Handles the last batch even if it's smaller than batch_size
+        for i in tqdm(range(0, len(images), self.batch_size), total=len(images)//self.batch_size + 1, desc=f"Running batch inference on {self.device}"):
+            batch = images[i : i + self.batch_size].to(self.device)
+            outputs = self.model(batch)
+
+            outputs = outputs.detach().cpu()
+            results.append(outputs)
+
+        final_results = torch.cat(results, dim=0)
+        return final_results
+
+    @torch.no_grad()
+    def run(
+        self, 
+        images: list[Image.Image], 
+        names_and_subjects: Union[dict, None] = {"NSD": "all"}
+    ) -> Union[dict, torch.Tensor]:
+        
+        images = [imagenet_transforms(image) for image in images]
+        images = torch.stack(images, dim=0)
+        assert images.ndim == 4, f"Expected images to be a 4D tensor, but got a {images.ndim}D tensor instead"
+
+        if self.is_single_subject_model:
+            if names_and_subjects is not None:
+                print("\033[93mModel is a single-subject model, but names_and_subjects were provided. Ignoring names_and_subjects. To avoid this warning, set names_and_subjects to None when calling .run()\033[0m")
+
+            ## returns a torch tensor
+            return self.run_single_subject_inference(
+                images=images,
+            )
+        else:
+            ## returns a dict
+            return self.run_multi_subject_inference(
+                images=images,
+                names_and_subjects=names_and_subjects,
+            )
+
+        
 
     @torch.no_grad()
     def plot(
