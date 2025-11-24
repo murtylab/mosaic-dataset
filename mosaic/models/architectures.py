@@ -21,7 +21,7 @@ from torchvision.models.squeezenet import Fire
 from typing import Optional
 import copy
 from typing import Union
-from ..constants import num_subjects
+from ..constants import num_subjects, inference_dataset_name_mapping
 
 
 """
@@ -743,7 +743,7 @@ class EncoderMultiHead(nn.Module):
             for subject_id_int in names_and_subjects[dataset_name]:
                 assert subject_id_int in range(1, num_subjects[dataset_name]+1), f"For {dataset_name}, subject_id {subject_id_int} is out of range. Must be between 1 and {num_subjects[dataset_name]}."
 
-                subjectID_str = f"sub-{subject_id_int:02}_{dataset_name}"
+                subjectID_str = f"sub-{subject_id_int:02}_{inference_dataset_name_mapping[dataset_name]}"
 
                 assert subjectID_str in self.subject_readouts, f"Subject ID {subjectID_str} not found in readouts: {list(self.subject_readouts.keys())}" 
 

@@ -57,6 +57,23 @@ subject_id_to_file_mapping = {
 }
 
 
+"""
+This is required because the names of the datasets used in the models readout heads
+are in short-form like NSD for NaturalScenesDataset etc.
+
+Ideally we should streamline this later and use consistent names all across!
+"""
+inference_dataset_name_mapping = {
+    "NaturalScenesDataset": "NSD",
+    "GenericObjectDecoding": "GOD",
+    "BOLDMomentsDataset": "BMD",
+    "BOLD5000": "BOLD5000",
+    "deeprecon": "deeprecon",
+    "HumanActionsDataset": "HAD",
+    "NaturalObjectDataset": "NOD",
+    "THINGS": "THINGS",
+}
+
 num_subjects = {
     name: len(subject_id_to_file_mapping[name])
     for name in subject_id_to_file_mapping.keys()
