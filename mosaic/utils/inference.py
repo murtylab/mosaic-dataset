@@ -140,10 +140,16 @@ class MosaicInference:
         assert isinstance(subject_id, int), f"subject_id must be an integer, but got: {type(subject_id)}"
         assert dataset_name in list(num_subjects.keys()), f"Dataset name {dataset_name} is not valid. Please choose from {list(num_subjects.keys())}."
         assert mode in valid_plot_modes, f"mode must be one of {valid_plot_modes}, but got: {mode}"
+
         result = self.run(
             images=[image], names_and_subjects={dataset_name: [subject_id]}
         )
-        voxel_activations = result[dataset_name][f"sub-{subject_id:02}"]
+
+        if self.is_single_subject_model:
+            assert torch.is_tensor(result), f"Expected result to be a torch tensor for single-subject models, but got: {type(result)}"
+            voxel_activations = result
+        else:
+            voxel_activations = result[dataset_name][f"sub-{subject_id:02}"]
 
         if self.model.vertices == 'visual':
             rois = [f"GlasserGroup_{x}" for x in range(1, 6)]
