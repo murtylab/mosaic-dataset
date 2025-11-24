@@ -21,9 +21,7 @@ def from_pretrained(
     folder: local folder to download the checkpoint to
 
     RETURNS:
-    pretrained backbone, type torch module in nn.DataParallel. specified architecture with pretrained weights loaded in.
-    model_config: dict, dictionary of the corresponding model specifications. useful for other functions that need to know something about 
-    the model that that's not easily accessible, like plotting functions needing to know the vertices it was trained on.
+    pretrained backbone, type torch module in nn.DataParallel. specified architecture with pretrained weights loaded in and set to eval mode.
     
     """
     assert (

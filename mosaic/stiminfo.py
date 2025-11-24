@@ -1,4 +1,3 @@
-
 import requests
 import os
 import pandas as pd
@@ -16,7 +15,7 @@ file_mapping = {
     "HAD": "had_stiminfo.tsv",
 }
 
-def get_stiminfo(dataset_name: str, folder: str) -> str:
+def get_stiminfo(dataset_name: str, folder: str = "./mosaic_stiminfo") -> str:
 
     assert dataset_name in file_mapping, f"Invalid dataset_name {dataset_name}. Must be one of {list(file_mapping.keys())}"
     if not os.path.exists(folder):

@@ -21,7 +21,7 @@ valid_frameworks = {
     "ResNet18": ["multihead"],
     "SqueezeNet1_1": ["multihead"],
     "SwinT": ["multihead"],
-    "CNN8": ["multihead"],
+    "CNN8": ["multihead", "singlehead"],
 }
 
 model_folder_s3 = "brain_optimized_checkpoints"
@@ -32,7 +32,20 @@ supported_checkpoints = {
     "SqueezeNet1_1": ["model-SqueezeNet1_1_framework-multihead_subjects-all_vertices-visual.pth"],
     "SwinT": ["model-SwinT_framework-multihead_subjects-all_vertices-visual.pth"],
     "CNN8": ["model-CNN8_framework-multihead_subjects-all_vertices-visual.pth",
-             "model-CNN8_framework-multihead_subjects-NSD_vertices-all.pth"]
+             "model-CNN8_framework-multihead_subjects-NSD_vertices-all.pth",
+             "model-CNN8_framework-multihead_subjects-NSD_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-all_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-01_deeprecon_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-01_NSD_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-02_deeprecon_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-02_NSD_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-03_deeprecon_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-03_NSD_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-04_NSD_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-05_NSD_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-06_NSD_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-07_NSD_vertices-visual.pth",
+             "model-CNN8_framework-singlehead_subjects-sub-08_NSD_vertices-visual.pth"]
 }
 supported_checkpoints_list = [item for sublist in supported_checkpoints.values() for item in sublist]
 
@@ -41,7 +54,19 @@ valid_subjects = {
     "ResNet18": ["all"],
     "SqueezeNet1_1": ["all"],
     "SwinT": ["all"],
-    "CNN8": ['all', "NSD"],
+    "CNN8": ['all',
+             "NSD",
+             "sub-01_deeprecon",
+             "sub-02_deeprecon",
+             "sub-03_deeprecon",
+             "sub-01_NSD",
+             "sub-02_NSD",
+             "sub-03_NSD",
+             "sub-04_NSD",
+             "sub-05_NSD",
+             "sub-06_NSD",
+             "sub-07_NSD",
+             "sub-08_NSD"]
 }
 
 from .architectures import (
@@ -177,12 +202,14 @@ def get_pretrained_backbone(
             **readout_kwargs,
         ).to(device)
 
-        bo_model = nn.DataParallel(
-            bo_model
-        )  # must use dataparallel because this is how the model was trained and weights saved
-        state_dict = torch.load(desired_checkpoint_local_path, map_location="cpu")
-        bo_model.load_state_dict(state_dict, strict=True)
-        bo_model = bo_model.eval()
-        return (
-            bo_model.module
-        )  # return the underlying model, not the dataparallel wrapper
+    bo_model = nn.DataParallel(
+        bo_model
+    )  # must use dataparallel because this is how the model was trained and weights saved
+    state_dict = torch.load(desired_checkpoint_local_path, map_location="cpu")
+    bo_model.load_state_dict(state_dict, strict=True)
+    bo_model = bo_model.eval()
+    model = bo_model.module #return the underlying model, not the dataparallel wrapper
+    model.vertices = vertices
+    return (
+        model
+    )  

@@ -11,3 +11,4 @@ dist/
 *.npy
 *.pth
 *.hdf5
+*.tsv
