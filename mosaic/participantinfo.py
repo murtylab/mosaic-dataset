@@ -5,6 +5,8 @@ import pandas as pd
 from .constants import BASE_URL, participantinfo_folder
 from .utils.download import download_file
 
+## small inconsistency here: THINGS_fmri here refers to THINGS everywhere else in the codebase.
+## maybe we should fix this down the line
 valid_datasets = {"BOLD5000", "BOLDMomentsDataset", "deeprecon", "GenericObjectDecoding", "HumanActionsDataset", "NaturalObjectDataset", "NaturalScenesDataset", "THINGS_fmri"}
 
 def get_participantinfo(dataset_name: str, folder: str = "./mosaic_participantinfo") -> str:
