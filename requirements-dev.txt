@@ -1,4 +1,0 @@
--r requirements.txt
-scikit-learn
-matplotlib
-s3fs
