@@ -3,9 +3,9 @@ import pytest
 import torch
 import torch.nn as nn
 from mosaic import from_pretrained
-from mosaic.constants import subject_id_to_file_mapping
+from mosaic.utils.json import load_json
 
-MODEL_FOLDER = "/scratch1/mayukh/mosaic_models_temp_mayukh"
+MODEL_FOLDER = load_json("tests/dataset_and_model_paths.json")["models_folder"]
 
 # ===================================================================
 # Exact list of released checkpoints (copy-pasted from your code)

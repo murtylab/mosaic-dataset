@@ -2,11 +2,10 @@ import pytest
 import mosaic
 from mosaic.constants import subject_id_to_file_mapping
 from mosaic.datasets.single_subject import SingleSubjectDataset
+from mosaic.utils.json import load_json
 from torch.utils.data import ConcatDataset
 
-
-DATASET_FOLDER = "/research/datasets/mosaic-dataset"
-MODEL_FOLDER = "/scratch1/mayukh/mosaic_models_temp_mayukh"
+DATASET_FOLDER = load_json("tests/dataset_and_model_paths.json")["dataset_folder"]
 
 all_dataset_names = list(subject_id_to_file_mapping.keys())
 
