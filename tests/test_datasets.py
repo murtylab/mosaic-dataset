@@ -5,7 +5,7 @@ from mosaic.datasets.single_subject import SingleSubjectDataset
 from mosaic.utils.json import load_json
 from torch.utils.data import ConcatDataset
 
-DATASET_FOLDER = load_json("tests/dataset_and_model_paths.json")["dataset_folder"]
+DATASET_FOLDER = load_json("tests/testing_config.json")["dataset_folder"]
 
 all_dataset_names = list(subject_id_to_file_mapping.keys())
 

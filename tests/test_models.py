@@ -5,8 +5,10 @@ import torch.nn as nn
 from mosaic import from_pretrained
 from mosaic.utils.json import load_json
 
-MODEL_FOLDER = load_json("tests/dataset_and_model_paths.json")["models_folder"]
+testing_config = load_json("tests/testing_config.json")
 
+MODEL_FOLDER = testing_config["models_folder"]
+DOWNLOAD_PRETRAINED_MODELS = testing_config["download_pretrained_models"]
 # ===================================================================
 # Exact list of released checkpoints (copy-pasted from your code)
 # ===================================================================
@@ -110,6 +112,7 @@ def test_pretrained_model_multihead(backbone, framework, subjects, vertices):
             subjects=subjects,      # pass exactly as in filename
             vertices=vertices,
             folder=MODEL_FOLDER,
+            pretrained=DOWNLOAD_PRETRAINED_MODELS
         )
 
         assert isinstance(model, nn.Module)
@@ -131,6 +134,7 @@ def test_pretrained_model_singlehead_cnn8(backbone, framework, subjects, vertice
             subjects=subjects,
             vertices=vertices,
             folder=MODEL_FOLDER,
+            pretrained=DOWNLOAD_PRETRAINED_MODELS
         )
 
         assert isinstance(model, nn.Module)
