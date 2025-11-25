@@ -7,6 +7,7 @@ from ..constants import BASE_URL
 from ..utils.download import download_file
 from .transforms import SelectROIs
 from .readout import SpatialXFeatureLinear
+from ..utils.checkpoint_conversion import convert_dataparallel_state_dict_to_vanilla
 import torch.nn as nn
 
 valid_backbone_names = ["AlexNet", "ResNet18", "SqueezeNet1_1", "SwinT", "CNN8"]
@@ -34,21 +35,23 @@ supported_checkpoints = {
     "ResNet18": ["model-ResNet18_framework-multihead_subjects-all_vertices-visual.pth"],
     "SqueezeNet1_1": ["model-SqueezeNet1_1_framework-multihead_subjects-all_vertices-visual.pth"],
     "SwinT": ["model-SwinT_framework-multihead_subjects-all_vertices-visual.pth"],
-    "CNN8": ["model-CNN8_framework-multihead_subjects-all_vertices-visual.pth",
-             "model-CNN8_framework-multihead_subjects-NSD_vertices-all.pth",
-             "model-CNN8_framework-multihead_subjects-NSD_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-all_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-01_deeprecon_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-01_NSD_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-02_deeprecon_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-02_NSD_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-03_deeprecon_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-03_NSD_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-04_NSD_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-05_NSD_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-06_NSD_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-07_NSD_vertices-visual.pth",
-             "model-CNN8_framework-singlehead_subjects-sub-08_NSD_vertices-visual.pth"]
+    "CNN8": [
+        "model-CNN8_framework-multihead_subjects-all_vertices-visual.pth",
+        "model-CNN8_framework-multihead_subjects-NSD_vertices-all.pth",
+        "model-CNN8_framework-multihead_subjects-NSD_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-all_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-01_NSD_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-02_NSD_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-03_NSD_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-04_NSD_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-05_NSD_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-06_NSD_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-07_NSD_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-08_NSD_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-01_deeprecon_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-02_deeprecon_vertices-visual.pth",
+        "model-CNN8_framework-singlehead_subjects-sub-03_deeprecon_vertices-visual.pth",
+        ]
 }
 
 supported_checkpoints_list = [
@@ -254,6 +257,10 @@ def get_pretrained_backbone(
     # Load weights
     # ------------------------------------------------------------------
     state_dict = torch.load(local_path, map_location="cpu")
+
+    if not isinstance(model, nn.DataParallel):
+        state_dict = convert_dataparallel_state_dict_to_vanilla(state_dict)
+
     model.load_state_dict(state_dict, strict=True)
     model = model.eval()
 
