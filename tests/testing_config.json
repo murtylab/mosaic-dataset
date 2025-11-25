@@ -1,4 +1,5 @@
 {
     "dataset_folder": "./MOSAIC",
-    "models_folder": "./mosaic_models"
+    "models_folder": "./mosaic_models",
+    "download_pretrained_models": false
 }
