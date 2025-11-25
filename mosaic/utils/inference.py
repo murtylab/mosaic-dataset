@@ -22,16 +22,9 @@ imagenet_transforms = transforms.Compose(
 
 valid_plot_modes = ['white', 'midthickness', 'pial', 'inflated', 'very_inflated', 'flat', 'sphere']
 
-def check_if_single_subject_model(
-    model
-):
-    assert hasattr(model, "core"), f"Model must have a 'core' attribute, but got this model instead:\n {model}"
-    if isinstance(model.core, C8NonSteerableCNN):
-        return True
-    if hasattr(model, "framework"):
-        if model.framework == "singlehead":
-            return True
-    return False
+def check_if_single_subject_model(model):
+    assert hasattr(model, "framework"), f"Model must have a 'framework' attribute, but got this model instead:\n {model}"
+    return model.framework == "singlehead"
 
 class MosaicInference:
     def __init__(
