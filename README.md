@@ -22,7 +22,7 @@ dataset = mosaic.load(
         "NaturalScenesDataset": [1], ## set this to "all" if you want to download data for all subjects
         # "THINGS": "all"
     },
-    folder="/scratch1/datasets/mosaic_temp_mayukh/",
+    folder="./MOSAIC",
     # if set to False, dataset[i]["betas"] will return a tensor containing the betas for all ROIs concatenated together
     parse_betas=True
 )
@@ -160,7 +160,7 @@ Downloading time series data
 from mosaic.datasets.timeseries import download_timeseries_data
 
 download_timeseries_data(
-    folder = "./data",
+    folder = "./mosaic-timeseries",
     dataset_name = "deeprecon"
 )
 ```
