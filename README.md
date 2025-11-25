@@ -174,7 +174,7 @@ python setup.py develop
 ```
 
 
-Running tests
+## Running tests
 
 **Note**: Before you start running tests, open `tests/dataset_and_model_paths.json` and rename the paths to wherever you already have the mosaic dataset `hdf5` files and the checkpoints downloaded. Or if you're yet to download them, set these to wherever you want to download your datasets/checkpoints.
 
