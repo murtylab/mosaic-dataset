@@ -189,7 +189,7 @@ python setup.py develop
 
 ## Running tests
 
-**Note**: Before you start running tests, open `tests/tesing_config.json` and make the following changesL
+**Note**: Before you start running tests, open [`tests/tesing_config.json`](https://github.com/murtylab/mosaic-dataset/blob/master/tests/testing_config.json) and make the following changesL
 
 1. Rename the `dataset_folder` and `models_folder` to wherever you already have the files or where you'd like to download them
 2. set `download_pretrained_models` to `true` if you want to test the models *with* their actual trained weights. It's set to `false` by default to avoid spamming the AWS bucket with requests. 
