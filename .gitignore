@@ -13,3 +13,4 @@ dist/
 *.hdf5
 *.tsv
 .pytest_cache/
+.DS_Store
