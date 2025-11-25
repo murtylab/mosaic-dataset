@@ -176,7 +176,7 @@ python setup.py develop
 
 Running tests
 
-In the testing script, set `DATASET_FOLDER` to wherever you've already downloaded the dataset. This is so that you don't have to re-download the dataset again.
+**Note**: In the `tests/test_datasets.py`, set `DATASET_FOLDER` to wherever you've already downloaded the dataset. This is so that you don't have to re-download the dataset again.
 
 ```bash
 pytest -vvx --capture=no tests/
