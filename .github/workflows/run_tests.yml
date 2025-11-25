@@ -31,4 +31,4 @@ jobs:
         python setup.py develop
     - name: Test with pytest
       run: |
-        pytest -vvx tests/test_data_source.py && pytest -vvx tests/test_models.py
+        mkdir mosaic_models && pytest -vvx tests/test_data_source.py && pytest -vvx tests/test_models.py

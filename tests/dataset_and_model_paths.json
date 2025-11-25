@@ -1,4 +1,4 @@
 {
-    "dataset_folder": "/research/datasets/mosaic-dataset",
-    "models_folder": "/research/models/mosaic-models"
+    "dataset_folder": "./MOSAIC",
+    "models_folder": "./mosaic_models"
 }
