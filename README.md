@@ -172,3 +172,12 @@ git clone git+https://github.com/Mayukhdeb/mosaic-dataset.git
 cd mosaic-dataset
 python setup.py develop
 ```
+
+
+Running tests
+
+In the testing script, set `DATASET_FOLDER` to wherever you've already downloaded the dataset. This is so that you don't have to re-download the dataset again.
+
+```bash
+pytest -vvx --capture=no tests/
+```
