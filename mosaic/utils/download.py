@@ -17,8 +17,19 @@ def check_if_need_to_download(filename: str):
 
     return need_to_download
 
+def check_if_url_exists(url: str) -> bool:
+    try:
+        response = requests.head(url)
+        if response.status_code == 200:
+            return True
+        else:
+            raise ValueError(f"URL ({url}) does not exist or returned status code {response.status_code}")
+    except requests.RequestException as e:
+        raise RuntimeError(f"Request failed: {e}")
+
 def download_file(base_url: str, file: str, save_as: str):
     url = f"{base_url}/{file}"
+    check_if_url_exists(url=url)
     try:
         with requests.get(url, stream=True) as r:
             r.raise_for_status()
