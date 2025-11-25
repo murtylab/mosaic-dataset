@@ -1,11 +1,24 @@
 <p align="center">
-    <img src="https://github.com/murtylab/mosaic-dataset/raw/master/images/banner.png" alt="mosaic-dataset banner" width="50%">
+  <img
+    src="https://github.com/murtylab/mosaic-dataset/raw/master/images/banner.png"
+    alt="mosaic-dataset banner"
+    width="50%"
+  >
 </p>
 
 <p align="center">
-    <a href="https://colab.research.google.com/github/murtylab/mosaic-dataset/blob/master/examples/mosaic-starter.ipynb">
-        <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    </a>
+  <a href="https://colab.research.google.com/github/murtylab/mosaic-dataset/blob/master/examples/mosaic-starter.ipynb">
+    <img
+      src="https://colab.research.google.com/assets/colab-badge.svg"
+      alt="Open In Colab"
+    >
+  </a>
+  <a href="https://github.com/murtylab/mosaic-dataset/actions/workflows/run_tests.yml">
+    <img
+      src="https://github.com/murtylab/mosaic-dataset/actions/workflows/run_tests.yml/badge.svg"
+      alt="test mosaic"
+    >
+  </a>
 </p>
 
 Load the mosaic dataset (Lahner et al.) and the associated pre-trained models
