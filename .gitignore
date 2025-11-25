@@ -12,3 +12,4 @@ dist/
 *.pth
 *.hdf5
 *.tsv
+.pytest_cache/
