@@ -77,6 +77,7 @@ def get_pretrained_backbone(
     vertices: str,
     folder: str = "./mosaic_models/",
     device: str = "cpu",
+    pretrained = True,
 ):
     """
     Load a brain-optimized pretrained model.
@@ -143,23 +144,25 @@ def get_pretrained_backbone(
     # ------------------------------------------------------------------
     # Download if needed
     # ------------------------------------------------------------------
-    os.makedirs(folder, exist_ok=True)
-    local_path = os.path.join(folder, desired_checkpoint)
+    if pretrained:
+        os.makedirs(folder, exist_ok=True)
+        local_path = os.path.join(folder, desired_checkpoint)
 
-    if not os.path.exists(local_path):
-        url = f"{BASE_URL}/{model_folder_s3}/{desired_checkpoint}"
-        response = requests.head(url)
-        if response.status_code != 200:
-            raise RuntimeError(f"Checkpoint not reachable: {url}")
-        print(f"Downloading {desired_checkpoint} → {local_path}")
-        download_file(
-            base_url=BASE_URL,
-            file=f"{model_folder_s3}/{desired_checkpoint}",
-            save_as=local_path,
-        )
+        if not os.path.exists(local_path):
+            url = f"{BASE_URL}/{model_folder_s3}/{desired_checkpoint}"
+            response = requests.head(url)
+            if response.status_code != 200:
+                raise RuntimeError(f"Checkpoint not reachable: {url}")
+            print(f"Downloading {desired_checkpoint} → {local_path}")
+            download_file(
+                base_url=BASE_URL,
+                file=f"{model_folder_s3}/{desired_checkpoint}",
+                save_as=local_path,
+            )
+        else:
+            print(f"Using cached checkpoint: {local_path}")
     else:
-        print(f"Using cached checkpoint: {local_path}")
-
+        pass
     # ------------------------------------------------------------------
     # Build core
     # ------------------------------------------------------------------
@@ -253,15 +256,19 @@ def get_pretrained_backbone(
     else:
         raise ValueError(f"Unknown framework: {framework}")
 
-    # ------------------------------------------------------------------
-    # Load weights
-    # ------------------------------------------------------------------
-    state_dict = torch.load(local_path, map_location="cpu")
+    if pretrained:
+        # ------------------------------------------------------------------
+        # Load weights
+        # ------------------------------------------------------------------
+        state_dict = torch.load(local_path, map_location="cpu")
 
-    if not isinstance(model, nn.DataParallel):
-        state_dict = convert_dataparallel_state_dict_to_vanilla(state_dict)
+        if not isinstance(model, nn.DataParallel):
+            state_dict = convert_dataparallel_state_dict_to_vanilla(state_dict)
 
-    model.load_state_dict(state_dict, strict=True)
+        model.load_state_dict(state_dict, strict=True)
+    else:
+        pass
+
     model = model.eval()
 
     # Remove DataParallel wrapper (if present)

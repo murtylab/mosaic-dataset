@@ -9,6 +9,7 @@ def from_pretrained(
     subjects: Union[str, list] = "all",
     vertices: str = "visual",
     folder: str = "./mosaic_models/",
+    pretrained: bool = True, ## set this to false if you want an untrained model
 ) -> nn.Module:
     """
     Download and load a pretrained brain optimized model by specifying backbone, framework, subjects, and vertices
@@ -38,6 +39,7 @@ def from_pretrained(
         subjects=subjects,
         vertices=vertices,
         folder=folder,
+        pretrained=pretrained,
     )
 
     model.vertices = vertices
