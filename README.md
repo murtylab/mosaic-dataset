@@ -179,5 +179,11 @@ Running tests
 **Note**: In the `tests/test_datasets.py`, set `DATASET_FOLDER` to wherever you've already downloaded the dataset. This is so that you don't have to re-download the dataset again.
 
 ```bash
+pytest -vvx tests/
+```
+
+And to make the tests more verbose (with the prints displayed)
+
+```bash
 pytest -vvx --capture=no tests/
 ```
