@@ -11,13 +11,13 @@ release checklist:
     5.1 `python3 setup.py sdist bdist_wheel`
     5.2 (optional) `python3 -m pip install --user --upgrade twine`
     5.3 `python3 -m twine upload dist/*`
-6. make a new release on github with the latest version
+6. git tag the release: `git tag vX.Y.Z` and `git push origin vX.Y.Z`
 """
 
 
 setuptools.setup(
     name="mosaic-dataset",
-    version="0.0.3",
+    version="0.0.4",
     description="A scalable framework for fMRI dataset aggregation and modeling of human vision",
     author="Benjamin Lahner, Mayukh Deb, N. Apurva Ratan Murty, Aude Oliva",
     author_email="blahner@mit.edu; mayukh@gatech.edu; ratan@gatech.edu; oliva@mit.edu",
