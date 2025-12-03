@@ -28,7 +28,7 @@ def render_html_in_notebook(filename: str):
 
     return HTML(html)
 
-def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str, symmetric_cmap: bool, ignore_nan: bool = True) -> None:
+def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str, symmetric_cmap: bool, ignore_nan: bool = True, vmin=None, vmax=None) -> None:
 
     """
     if ignore_nan is True, we will replace NaN values with zeros.
@@ -43,12 +43,15 @@ def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str, symmetric_cm
     plotting_mode = getattr(hcp.mesh, mode)
     stat = hcp.cortex_data(data)
 
-    if not symmetric_cmap:
-        vmin=np.nanmin(stat)
-        vmax=np.nanmax(stat)
+    if vmin is not None and vmax is not None:
+        pass
     else:
-        vmin = None
-        vmax = None
+        if not symmetric_cmap:
+            vmin=np.nanmin(stat)
+            vmax=np.nanmax(stat)
+        else:
+            vmin = None
+            vmax = None
     html_thing = plotting.view_surf(
         plotting_mode,
         surf_map=stat,
@@ -63,7 +66,7 @@ def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str, symmetric_cm
 
 
 def visualize(
-    betas: dict, save_as: str, mode="inflated", rois: list[str] = None, show=True, symmetric_cmap: bool = True, ignore_nan: bool = True
+    betas: dict, save_as: str, mode="inflated", rois: list[str] = None, show=True, symmetric_cmap: bool = True, ignore_nan: bool = True, vmin=None, vmax=None
 ) -> None:
     
     data_to_visualize = np.zeros(len(parcel_map))
@@ -98,7 +101,15 @@ def visualize(
         mode in valid_modes
     ), f"Expected mode to be one of {valid_modes}, got {mode} instead"
 
-    html_thing = visualize_voxel_data(data=data_to_visualize, save_as=save_as, mode=mode, symmetric_cmap=symmetric_cmap, ignore_nan=ignore_nan)
+    html_thing = visualize_voxel_data(
+        data=data_to_visualize, 
+        save_as=save_as, 
+        mode=mode, 
+        symmetric_cmap=symmetric_cmap, 
+        ignore_nan=ignore_nan, 
+        vmin=vmin, 
+        vmax=vmax
+    )
 
     if show:
         return html_thing
