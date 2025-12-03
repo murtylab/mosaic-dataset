@@ -28,7 +28,18 @@ def render_html_in_notebook(filename: str):
 
     return HTML(html)
 
-def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str, symmetric_cmap: bool) -> None:
+def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str, symmetric_cmap: bool, ignore_nan: bool = True) -> None:
+
+    """
+    if ignore_nan is True, we will replace NaN values with zeros.
+    """
+    
+    if not ignore_nan:
+        if np.isnan(data).any():
+            raise ValueError("Data contains NaN values. Please remove or impute them before visualization.")
+    else:
+        data = np.nan_to_num(data, nan=0.0)
+    
     plotting_mode = getattr(hcp.mesh, mode)
     stat = hcp.cortex_data(data)
 
@@ -52,7 +63,7 @@ def visualize_voxel_data(data: np.ndarray, save_as: str, mode: str, symmetric_cm
 
 
 def visualize(
-    betas: dict, save_as: str, mode="inflated", rois: list[str] = None, show=True, symmetric_cmap: bool = True
+    betas: dict, save_as: str, mode="inflated", rois: list[str] = None, show=True, symmetric_cmap: bool = True, ignore_nan: bool = True
 ) -> None:
     
     data_to_visualize = np.zeros(len(parcel_map))
@@ -87,7 +98,7 @@ def visualize(
         mode in valid_modes
     ), f"Expected mode to be one of {valid_modes}, got {mode} instead"
 
-    html_thing = visualize_voxel_data(data=data_to_visualize, save_as=save_as, mode=mode, symmetric_cmap=symmetric_cmap)
+    html_thing = visualize_voxel_data(data=data_to_visualize, save_as=save_as, mode=mode, symmetric_cmap=symmetric_cmap, ignore_nan=ignore_nan)
 
     if show:
         return html_thing
