@@ -150,8 +150,8 @@ from mosaic.datasets import MergedDataset
 
 merge_hdf5_files(
     files=[
-        './MOSAIC/NSD/sub-01_NSD.hdf5',
-        './MOSAIC/deep_recon/sub-01_deeprecon.hdf5'
+        './MOSAIC/sub-01_NSD.hdf5',
+        './MOSAIC/sub-01_deeprecon.hdf5'
     ],
     save_as="./merged-test.hdf5"
 )
