@@ -276,4 +276,5 @@ def get_pretrained_backbone(
         model = model.module
 
     model.vertices = vertices  # useful metadata
+    model.framework = framework  # useful metadata
     return model
