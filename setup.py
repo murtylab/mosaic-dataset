@@ -18,7 +18,7 @@ release checklist:
 
 setuptools.setup(
     name="mosaic-dataset",
-    version="0.0.5",
+    version="0.0.6",
     description="A scalable framework for fMRI dataset aggregation and modeling of human vision",
     author="Benjamin Lahner, Mayukh Deb, N. Apurva Ratan Murty, Aude Oliva",
     author_email="blahner@mit.edu; mayukh@gatech.edu; ratan@gatech.edu; oliva@mit.edu",
