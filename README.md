@@ -21,6 +21,16 @@
   </a>
 </p>
 
+<p align="center">
+  <a href="https://www.biorxiv.org/content/10.64898/2025.11.28.690060v1">
+    <img
+      src="http://img.shields.io/badge/DOI-10.64898/2025.11.28.690060-B31B1B.svg"
+      alt="DOI:10.64898/2025.11.28.690060"
+    >
+  </a>
+</p>
+
+
 Load the mosaic dataset ([Lahner et al.](https://www.biorxiv.org/content/10.64898/2025.11.28.690060v1)) and the associated pre-trained models
 
 ```bash
