@@ -21,7 +21,7 @@
   </a>
 </p>
 
-Load the mosaic dataset (Lahner et al.) and the associated pre-trained models
+Load the mosaic dataset ([Lahner et al.](https://www.biorxiv.org/content/10.64898/2025.11.28.690060v1)) and the associated pre-trained models
 
 ```bash
 pip install mosaic-dataset
