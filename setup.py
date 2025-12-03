@@ -5,6 +5,7 @@ with open("README.md", "r") as fh:
 
 """
 release checklist:
+0. cleanup `rm -rf mosaic_dataset.egg-info build dist/`
 1. update version on `setup.py`
 4. commit changes and push
 5. make release on PyPI. Run the following commands:
